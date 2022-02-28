@@ -1,0 +1,11 @@
+{
+  "name": "odinbook-backend",
+  "version": "1.0.0",
+  "description": "Backend API for odinbook - a facebook clone",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Daniel Moderiano",
+  "license": "MIT"
+}
