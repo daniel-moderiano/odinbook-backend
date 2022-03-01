@@ -1,4 +1,3 @@
-// Import app as a whole for more end-to-end based testing of API routes. Alternatively a new barebones express app can be created within test modules to better focus on unit-style testing.
 const app = require('../app');
 const request = require('supertest');
 
