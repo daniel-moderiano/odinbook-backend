@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Backend API for odinbook - a facebook clone",
   "main": "server.js",
+  "jest": {
+    "testPathIgnorePatterns": ["__tests__/info.test.js"]
+  },
   "scripts": {
     "test": "jest",
     "start": "node server.js",
