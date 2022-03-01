@@ -21,7 +21,7 @@ const userSchema = new Schema(
     bio: {  // Basic information for profile page. All optional
       location: String,
       occupation: String,
-      studiedAt: String,
+      education: String,
       gender: String  // Almost considered enums for a second...
     }
     // TODO profile picture support
@@ -31,7 +31,7 @@ const userSchema = new Schema(
   }
 );
 
-// TODO Virtual for 'date joined' using timestamp? Or may need a specific date joined field for virtuals
-// TODO virtual full name
+// TODO Virtual for 'date joined' using timestamp?
+// TODO virtual for full name
 
 module.exports = mongoose.model('User', userSchema);

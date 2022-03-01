@@ -13,7 +13,7 @@ const postSchema = new Schema(
     text: { type: String, required: true }, 
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
-    // TODO image support
+    // TODO image/media support
   },
   {
     timestamps: true, // Adds createdAt and updatedAt timestamps automatically

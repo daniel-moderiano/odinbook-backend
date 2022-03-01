@@ -18,6 +18,6 @@ const commentSchema = new Schema(
 );
 
 // TODO Virtual for number of likes
-// TODO Virtual for timestamp
+// TODO Virtual for timestamp (short date, e.g. 3 d, then hover for full timestamp year/time)
 
 module.exports = mongoose.model('Comment', commentSchema);
