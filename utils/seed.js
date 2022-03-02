@@ -18,7 +18,6 @@ const createUser = () => {
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     password: faker.internet.password(), 
-    comments: [],
     friends: [],
     bio: { 
       location: faker.address.cityName(),
@@ -72,22 +71,27 @@ for (let i = 0; i < 20; i++) {
   posts[randomNum].comments.push(comment);
 };
 
-// comments.forEach((user) => {
-//   user.save((err) => {
-//     if (err) { console.log(err) }
-//   })
-// });
+const addToDB = () => {
+  comments.forEach((user) => {
+    user.save((err) => {
+      if (err) { console.log(err) }
+    })
+  });
+  
+  users.forEach((user) => {
+    user.save((err) => {
+      if (err) { console.log(err) }
+    })
+  });
+  
+  posts.forEach((user) => {
+    user.save((err) => {
+      if (err) { console.log(err) }
+    })
+  });
+};
 
-// users.forEach((user) => {
-//   user.save((err) => {
-//     if (err) { console.log(err) }
-//   })
-// });
-
-// posts.forEach((user) => {
-//   user.save((err) => {
-//     if (err) { console.log(err) }
-//   })
-// });
+// Call addToDB to add data
+// addToDB();
 
 

@@ -3,10 +3,19 @@
 // Import app as a whole for more end-to-end based testing of API routes. Alternatively a new barebones express app can be created within test modules to better focus on unit-style testing.
 const app = require('../app');
 const request = require('supertest');
+const db = require('./db');
+
+// Pass supertest agent for each test
+const agent = request.agent(app);
+
+// Setup connection to the database
+beforeAll(async () => await db.connect());
+beforeEach(async () => await db.clear());
+afterAll(async () => await db.close());
 
 // Testing routes using 'done' syntax. Test for general successful JSON response only
 test("GET req returns success response with JSON data", done => {
-  request(app)
+  agent
     .get("/api/posts")
     .expect("Content-Type", /json/)
     .expect(200, done);

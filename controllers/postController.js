@@ -1,17 +1,21 @@
 const asyncHandler = require('express-async-handler');
+const Post = require('../models/PostModel');
 
 // @desc    Get all posts
 // @route   GET /api/posts
 // @access  Private
 const getPosts = asyncHandler(async (req, res) => {
-  res.status(200).json({ message: 'Some arbitrary message' })
+  // Find all posts
+  const posts = await Post.find({});
+  res.status(200).json(posts)
 });
 
 // @desc    Get single post
 // @route   GET /api/posts/:postId
 // @access  Private
 const getPost = asyncHandler(async (req, res) => {
-  res.status(200).json({ post: 'Post data' })
+  const post = await Post.findById(req.params.postId);
+  res.status(200).json(post)
 });
 
 // @desc    Add new post

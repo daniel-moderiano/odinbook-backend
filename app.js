@@ -6,10 +6,7 @@ const userRoutes = require('./routes/userRoutes');
 const app = express();
 const cors = require('cors');
 const { errorHandler } = require('./middleware/errorMiddleware');
-const connectDB = require('./config/db');
 
-// Connect to MongoDB
-connectDB();
 
 // Allow requests from any origin via CORS (limit with additional options as needed)
 app.use(cors())

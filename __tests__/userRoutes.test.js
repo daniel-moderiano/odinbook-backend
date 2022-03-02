@@ -1,5 +1,12 @@
 const app = require('../app');
 const request = require('supertest');
+const db = require('./db');
+
+// Setup connection to the database
+beforeAll(async () => await db.connect());
+beforeEach(async () => await db.clear());
+// Leaving the following connection close func throws error for some unknown reason. Leave uncommented
+// afterAll(async () => await db.close()); 
 
 // Early iteration of tests to check that responses are being sent successfully
 // TODO update tests to with/without authentication token with error/success responses
