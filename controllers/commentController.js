@@ -16,8 +16,8 @@ const getComments = asyncHandler(async (req, res) => {
 // @route   GET /api/posts/:postId/comments/:commentId
 // @access  Private
 const getComment = asyncHandler(async (req, res) => {
-  // Search db by comment ID since comments are models with their own IDs
-  const comment = await Comment.findById(req.params.commentId).populate('user', 'firstName lastName');
+  // Search db by comment ID directly, and populate only the user info to be displayed on the UI
+  const comment = await Comment.findById(req.params.commentId).populate('user', 'firstName lastName profilePic');
 
   if (!comment) {  // comment not found in db
     res.status(400)
@@ -52,7 +52,16 @@ const likeComment = asyncHandler(async (req, res) => {
 // @route   DELETE /api/posts/:postId/comments/:commentId
 // @access  Private
 const deleteComment = asyncHandler(async (req, res) => {
-  res.status(200).json({ comment: 'Comment data' })
+  // Search comment directly by ID
+  const comment = await Comment.findById(req.params.commentId);
+
+  if (!comment) {  // comment not found in db
+    res.status(400);
+    throw new Error('Comment not found');
+  }
+  // No errors, remove comment from db
+  await comment.remove();
+  res.status(200).json({ id: req.params.commentId });  // Consider also returning the deleted comment
 });
 
 module.exports = {
