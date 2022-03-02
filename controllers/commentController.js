@@ -99,7 +99,25 @@ const updateComment = [
 // @route   PUT /api/posts/:postId/comments/:commentId/likes
 // @access  Private
 const likeComment = asyncHandler(async (req, res) => {
-  res.status(200).json({ comment: 'Comment data' })
+  // Check if comment exists in db
+  const comment = await Comment.findById(req.params.commentId);
+
+  if (!comment) {  // comment not found in db
+    res.status(400)
+    throw new Error('Comment not found');
+  }
+
+  // Check if the user has already liked this comment
+  const alreadyLiked = comment.likes.some((user) => user._id === req.user._id);
+
+  if (!alreadyLiked) {
+    comment.likes.push(req.user._id);
+    await comment.save();
+    res.status(200).json(comment)   // Return status OK and updated comment to client
+  } else {
+    res.status(400)
+    throw new Error('Comment already liked');
+  }
 });
 
 // @desc    Delete single post
