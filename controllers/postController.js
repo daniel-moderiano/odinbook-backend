@@ -30,7 +30,8 @@ const getPost = asyncHandler(async (req, res) => {
 // @access  Private
 const addPost = [
   // Validate text input. No sanitisation taking place here; this data is not used to execute any commands. Take care to sanitise as needed on frontend output/use
-  body('text', 'Comment text is required').trim().isLength({ min: 1 }),
+  // TODO - once image upload is implemented, we can allow for empty post text provided an image is uploaded
+  body('text', 'Post text is required').trim().isLength({ min: 1 }),
 
   // Process request after input data has been validated
   asyncHandler(async (req, res, next) => {
@@ -39,28 +40,21 @@ const addPost = [
     const errors = validationResult(req);
 
     // Create new post
-    const newPost = new Comment({
+    const newPost = new Post({
       user: req.user._id, // req.user is created by the auth middleware when accessing any protected route
-      title: req.body.title,
       text: req.body.text, 
       likes: [],
       comments: [],
-      imageUrl: String,
     });
 
     // Validation errors have occurred. Return these to the user is JSON format
     if (!errors.isEmpty()) {
-      res.status(400).json(errors.array());   // Do not throw error here, allow frontend to handle as needed
+      res.status(400).json(errors.array());   // Do not throw single error here, pass all validation errors to client
     } else {
       // Form data is valid. Save to db
-      const savedComment = await newComment.save();
+      await newPost.save();
       // Add new comment to the current post's comments array, using the newly created comment ID
-      await Post.findByIdAndUpdate(
-        req.params.postId, 
-        { $push: { "comments": savedComment._id } },
-        { new: true }
-      );
-      res.status(200).json(newComment)   // Return status OK and new comment to client
+      res.status(200).json(newPost)   // Return status OK and new comment to client
     }
   }),
 ];

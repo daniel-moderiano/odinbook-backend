@@ -9,7 +9,6 @@ const postSchema = new Schema(
       ref: 'User', 
       required: true  
     },
-    title: { type: String, required: true },
     text: { type: String, required: true }, 
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     comments: [
