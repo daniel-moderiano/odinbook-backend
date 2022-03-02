@@ -56,9 +56,8 @@ const registerUser = [
         },
         profilePic: '',
       });
-      console.log(newUser);
 
-      // await newUser.save();
+      await newUser.save();
       res.status(200).json({
         _id: newUser._id,
         username: newUser.username,

@@ -53,7 +53,14 @@ const addComment = [
       res.status(400).json(errors.array());   // Do not throw error here, allow frontend to handle as needed
     } else {
       // Form data is valid. Save to db
-      await newComment.save();
+      const savedComment = await newComment.save();
+      // Add new comment to the post's comments array
+      const post = await Post.findByIdAndUpdate(
+        req.params.postId, 
+        { $push: { "comments": savedComment._id } },
+        { new: true }
+      );
+      console.log(post);
       res.status(200).json(newComment)   // Return status OK and new comment to client
     }
   }),
