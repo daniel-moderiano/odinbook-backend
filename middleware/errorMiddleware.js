@@ -1,7 +1,6 @@
 // Replace the inbuilt express error handler by defining a middleware func that accepts the err object in addition to the usual middleware params
 const errorHandler = (err, req, res, next) => {
   // Check if a status code was manually set already during the req/res cycle, otherwise use default 500 internal server error
-  console.log(res.statusCode);
   const statusCode = res.statusCode ? res.statusCode : 500;
   res.status(statusCode);
   // Return JSON instead of the default HTML error template by Express
