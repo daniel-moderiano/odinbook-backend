@@ -12,6 +12,6 @@ router.route('/:postId/likes').put(likePost);
 // Comment-specific routes (using the post routes as a base route)
 router.route('/:postId/comments').get(getComments).post(protectRoute, addComment);
 router.route('/:postId/comments/:commentId').get(getComment).put(updateComment).delete(deleteComment);
-router.route('/:postId/comments/:commentId/likes').put(likeComment);
+router.route('/:postId/comments/:commentId/likes').put(protectRoute, likeComment);
 
 module.exports = router;

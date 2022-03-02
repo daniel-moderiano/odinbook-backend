@@ -3,6 +3,7 @@ const Post = require('../models/PostModel');
 const User = require('../models/UserModel');
 const Comment = require('../models/CommentModel');
 const { body, validationResult } = require("express-validator");
+const mongoose = require('mongoose')
 
 // @desc    Get all comments
 // @route   GET /api/posts/:postId/comments
@@ -54,13 +55,12 @@ const addComment = [
     } else {
       // Form data is valid. Save to db
       const savedComment = await newComment.save();
-      // Add new comment to the post's comments array
-      const post = await Post.findByIdAndUpdate(
+      // Add new comment to the current post's comments array, using the newly created comment ID
+      await Post.findByIdAndUpdate(
         req.params.postId, 
         { $push: { "comments": savedComment._id } },
         { new: true }
       );
-      console.log(post);
       res.status(200).json(newComment)   // Return status OK and new comment to client
     }
   }),
@@ -115,7 +115,7 @@ const likeComment = asyncHandler(async (req, res) => {
   }
 
   // Check if the user has already liked this comment
-  const alreadyLiked = comment.likes.some((user) => user._id === req.user._id);
+  const alreadyLiked = comment.likes.some((user) => user.equals(mongoose.Types.ObjectId(req.user._id)));
 
   if (!alreadyLiked) {
     comment.likes.push(req.user._id);
