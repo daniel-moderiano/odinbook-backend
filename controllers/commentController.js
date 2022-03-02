@@ -1,17 +1,30 @@
 const asyncHandler = require('express-async-handler');
+const Post = require('../models/PostModel');
+const User = require('../models/UserModel');
+const Comment = require('../models/CommentModel');
 
 // @desc    Get all comments
 // @route   GET /api/posts/:postId/comments
 // @access  Private
 const getComments = asyncHandler(async (req, res) => {
-  res.status(200).json({ comments: [] })
+  // Find comments via post ID, and use projection + populate to retrieve the comments array with comment details
+  const post = await Post.findById(req.params.postId, 'comments').populate('comments');
+  res.status(200).json(post.comments)
 });
 
 // @desc    Get single comment
 // @route   GET /api/posts/:postId/comments/:commentId
 // @access  Private
 const getComment = asyncHandler(async (req, res) => {
-  res.status(200).json({ comment: 'Comment data' })
+  // Search db by comment ID since comments are models with their own IDs
+  const comment = await Comment.findById(req.params.commentId).populate('user', 'firstName lastName');
+
+  if (!comment) {  // comment not found in db
+    res.status(400)
+    throw new Error('Comment not found');
+  }
+  // No errors, return comment
+  res.status(200).json(comment);
 });
 
 // @desc    Add new comment

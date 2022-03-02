@@ -12,7 +12,9 @@ const postSchema = new Schema(
     title: { type: String, required: true },
     text: { type: String, required: true }, 
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
+    comments: [
+      { type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }
+    ],
     // TODO image/media support
     imageUrl: String,
   },
