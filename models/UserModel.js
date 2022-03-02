@@ -23,8 +23,9 @@ const userSchema = new Schema(
       occupation: String,
       education: String,
       gender: String  // Almost considered enums for a second...
-    }
+    },
     // TODO profile picture support - look at Multer + Mongo + Cloudinary setup
+    profilePic: { type: String }
   },
   {
     timestamps: true, // Adds createdAt and updatedAt timestamps automatically

@@ -1,4 +1,5 @@
 // Define all app-related functionality here, incluyding use of middleware and routes. Do not call server listen func here.
+require('dotenv').config();
 const express = require('express');
 const postRoutes = require('./routes/postRoutes');
 const userRoutes = require('./routes/userRoutes');
