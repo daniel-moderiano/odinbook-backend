@@ -5,7 +5,6 @@ const Post = require('../models/PostModel');
 // @route   GET /api/posts
 // @access  Private
 const getPosts = asyncHandler(async (req, res) => {
-  // Find all posts
   const posts = await Post.find({});
   res.status(200).json(posts)
 });
@@ -15,6 +14,10 @@ const getPosts = asyncHandler(async (req, res) => {
 // @access  Private
 const getPost = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.postId);
+  if (!post) {  // post not found in db, above query returns null
+    res.status(400);
+    throw new Error('Post not found');
+  }
   res.status(200).json(post)
 });
 
@@ -43,7 +46,15 @@ const likePost = asyncHandler(async (req, res) => {
 // @route   DELETE /api/posts/:postId
 // @access  Private
 const deletePost = asyncHandler(async (req, res) => {
-  res.status(200).json({ post: 'Post data' })
+  const post = await Post.findById(req.params.postId);
+
+  if (!post) {  // Post not found in db
+    res.status(400);
+    throw new Error('Post not found');
+  }
+  // Post found with no errors; remove from db
+  await post.remove();
+  res.status(200).json({ id: req.params.postId }); // Might consider returning the deleted post itself here
 });
 
 module.exports = {

@@ -91,7 +91,24 @@ const addToDB = () => {
   });
 };
 
+const addSinglePost = () => {
+  const post = createPost();
+  post.save();
+}
+
+const addSingleUser = () => {
+  const post = createUser();
+  post.save();
+}
+
+const addSingleComment = () => {
+  const post = createComment();
+  post.save();
+}
 // Call addToDB to add data
 // addToDB();
 
+// addSingleUser();
+// addSingleComment();
+// addSinglePost();
 
