@@ -18,13 +18,13 @@ const userSchema = new Schema(
       }
     ],
     bio: {  // Basic information for profile page. All optional
-      location: String,
-      occupation: String,
-      education: String,
-      gender: String  // Almost considered enums for a second...
+      location: { type: String, default: '' },
+      occupation: { type: String, default: '' },
+      education: { type: String, default: '' },
+      gender: { type: String, default: '' }  // Almost considered enums for a second...
     },
     // TODO profile picture support - look at Multer + Mongo + Cloudinary setup
-    profilePic: { type: String }
+    profilePic: { type: String, default: '' }
   },
   {
     timestamps: true, // Adds createdAt and updatedAt timestamps automatically

@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const Post = require('../models/PostModel');
 const User = require('../models/UserModel');
+const { body, validationResult } = require("express-validator");
 
 // @desc    Get all posts
 // @route   GET /api/posts
@@ -16,7 +17,7 @@ const getPosts = asyncHandler(async (req, res) => {
 const getPost = asyncHandler(async (req, res) => {
   // Retrieve post and populate only those user details required for display on posts (virtual 'fullName' can be called when first and last name are populated)
   const post = await Post.findById(req.params.postId).populate('user', 'firstName lastName profilePic');
-  
+
   if (!post) {  // post not found in db, above query returns null
     res.status(400);
     throw new Error('Post not found');
@@ -27,9 +28,42 @@ const getPost = asyncHandler(async (req, res) => {
 // @desc    Add new post
 // @route   POST /api/posts
 // @access  Private
-const addPost = asyncHandler(async (req, res) => {
-  res.status(200).json({ post: 'Post data' })
-});
+const addPost = [
+  // Validate text input. No sanitisation taking place here; this data is not used to execute any commands. Take care to sanitise as needed on frontend output/use
+  body('text', 'Comment text is required').trim().isLength({ min: 1 }),
+
+  // Process request after input data has been validated
+  asyncHandler(async (req, res, next) => {
+
+    // Extract the validation errors from a request
+    const errors = validationResult(req);
+
+    // Create new post
+    const newPost = new Comment({
+      user: req.user._id, // req.user is created by the auth middleware when accessing any protected route
+      title: req.body.title,
+      text: req.body.text, 
+      likes: [],
+      comments: [],
+      imageUrl: String,
+    });
+
+    // Validation errors have occurred. Return these to the user is JSON format
+    if (!errors.isEmpty()) {
+      res.status(400).json(errors.array());   // Do not throw error here, allow frontend to handle as needed
+    } else {
+      // Form data is valid. Save to db
+      const savedComment = await newComment.save();
+      // Add new comment to the current post's comments array, using the newly created comment ID
+      await Post.findByIdAndUpdate(
+        req.params.postId, 
+        { $push: { "comments": savedComment._id } },
+        { new: true }
+      );
+      res.status(200).json(newComment)   // Return status OK and new comment to client
+    }
+  }),
+];
 
 // @desc    Update single post
 // @route   PUT /api/posts/:postId

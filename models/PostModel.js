@@ -16,7 +16,7 @@ const postSchema = new Schema(
       { type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }
     ],
     // TODO image/media support
-    imageUrl: String,
+    imageUrl: { type: String, default: '' },
   },
   {
     timestamps: true, // Adds createdAt and updatedAt timestamps automatically

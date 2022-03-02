@@ -48,13 +48,6 @@ const registerUser = [
         email: req.body.email,
         password: hashedPassword, 
         friends: [],
-        bio: {  // Basic information for profile page. All optional
-          location: '',
-          occupation: '',
-          education: '',
-          gender: ''  // Almost considered enums for a second...
-        },
-        profilePic: '',
       });
 
       await newUser.save();
