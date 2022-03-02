@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const postSchema = new Schema(
   {
     user: { 
-      type: Schema.Types.ObjectId, // Reference to the User who created the comment
+      type: Schema.Types.ObjectId, // Reference to the User who created the post
       ref: 'User', 
       required: true  
     },

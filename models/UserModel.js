@@ -32,6 +32,11 @@ const userSchema = new Schema(
 );
 
 // TODO Virtual for 'date joined' using timestamp?
-// TODO virtual for full name
+// Virtual for user's full name
+userSchema  
+  .virtual('fullName')
+  .get(function() {
+    return `${this.firstName} ${this.lastName}`;
+  })
 
 module.exports = mongoose.model('User', userSchema);

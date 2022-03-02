@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Post = require('../models/PostModel');
+const User = require('../models/UserModel');
 
 // @desc    Get all posts
 // @route   GET /api/posts
@@ -13,7 +14,8 @@ const getPosts = asyncHandler(async (req, res) => {
 // @route   GET /api/posts/:postId
 // @access  Private
 const getPost = asyncHandler(async (req, res) => {
-  const post = await Post.findById(req.params.postId);
+  // Retrieve post and populate only those user details required for display on posts (virtual 'fullName' can be called when first and last name are populated)
+  const post = await Post.findById(req.params.postId).populate('user', 'firstName lastName profilePic');
   if (!post) {  // post not found in db, above query returns null
     res.status(400);
     throw new Error('Post not found');
