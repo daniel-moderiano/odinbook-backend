@@ -19,35 +19,35 @@ describe('Test API requests to routes concerning user posts', () => {
 
   // Testing 'getPost' behaviour
   test('Successful GET req for single post returns correct status 200 and JSON data', done => {
-    request(app).get('/api/posts')
+    request(app).get('/api/posts/anyPostId')
     .expect("Content-Type", /json/)
     .expect(200, done)
   });
 
   // Testing 'addPost' behaviour
   test('Successful POST req for adding post returns correct status 200 and JSON data', done => {
-    request(app).get('/api/posts')
+    request(app).post('/api/posts')
     .expect("Content-Type", /json/)
     .expect(200, done)
   });
 
   // Testing 'updatePost' behaviour
   test('Successful PUT req for updating post returns correct status 200 and JSON data', done => {
-    request(app).get('/api/posts')
+    request(app).put('/api/posts/anyPostId')
     .expect("Content-Type", /json/)
     .expect(200, done)
   });
 
   // Testing 'likePost' behaviour
   test('Successful PUT req for liking post returns correct status 200 and JSON data', done => {
-    request(app).get('/api/posts')
+    request(app).put('/api/posts/anyPostId/likes')
     .expect("Content-Type", /json/)
     .expect(200, done)
   });
 
   // Testing 'deletePost' behaviour
   test('Successful DELETE req for single post returns correct status 200 and JSON data', done => {
-    request(app).get('/api/posts')
+    request(app).delete('/api/posts/anyPostId')
     .expect("Content-Type", /json/)
     .expect(200, done)
   });
