@@ -2,7 +2,9 @@ const asyncHandler = require('express-async-handler');
 const Post = require('../models/PostModel');
 const User = require('../models/UserModel');
 const { body, validationResult } = require("express-validator");
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+
+// Note req.params.id of any kind is cast to ObjectID before a search query is run. Therefore, injection attacks do not have a foothold here (error will be thrown regardless).
 
 // @desc    Get all posts
 // @route   GET /api/posts

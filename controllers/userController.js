@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/UserModel');
 const { body, validationResult } = require("express-validator");
 
+// Note req.params.id of any kind is cast to ObjectID before a search query is run. Therefore, injection attacks do not have a foothold here (error will be thrown regardless).
+
 // Generate JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
