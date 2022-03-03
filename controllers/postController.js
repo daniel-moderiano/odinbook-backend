@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const Post = require('../models/PostModel');
 const User = require('../models/UserModel');
 const { body, validationResult } = require("express-validator");
+const mongoose = require('mongoose')
 
 // @desc    Get all posts
 // @route   GET /api/posts
@@ -112,9 +113,10 @@ const likePost = asyncHandler(async (req, res) => {
   const alreadyLiked = post.likes.some((user) => user.equals(mongoose.Types.ObjectId(req.user._id)));
 
   if (!alreadyLiked) {
+    console.log(req.user);
     post.likes.push(req.user._id);
     await post.save();  // this acts as an update operation
-    res.status(200).json(comment)   // Return status OK and updated comment to client
+    res.status(200).json(post)   // Return status OK and updated comment to client
   } else {
     // Throw error if user attempts to duplicate likes
     res.status(400)

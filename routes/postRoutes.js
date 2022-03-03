@@ -6,8 +6,8 @@ const { protectRoute } = require('../middleware/authMiddleware');
 
 // Post-specific routes
 router.route('/').get(protectRoute, getPosts).post(protectRoute, addPost);
-router.route('/:postId').get(protectRoute, getPost).put(updatePost).delete(protectRoute, deletePost);
-router.route('/:postId/likes').put(likePost);
+router.route('/:postId').get(protectRoute, getPost).put(protectRoute, updatePost).delete(protectRoute, deletePost);
+router.route('/:postId/likes').put(protectRoute, likePost);
 
 // Comment-specific routes (using the post routes as a base route)
 router.route('/:postId/comments').get(protectRoute, getComments).post(protectRoute, addComment);
