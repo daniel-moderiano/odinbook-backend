@@ -119,17 +119,9 @@ const loginUser = [
   }),
 ];
 
-// @desc    Get current user data (requires actively logged in user)
-// @route   GET /api/users/me
-// @access  Private
-const getMe = asyncHandler(async (req, res) => {
-  res.status(200).json({ user: 'User data' })
-});
-
 module.exports = {
   registerUser,
   loginUser,
-  getMe,
   getUser,
   getUsers
 }
