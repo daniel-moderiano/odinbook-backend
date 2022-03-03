@@ -15,8 +15,14 @@ const generateToken = (id) => {
 // @route   GET /api/users/:userId
 // @access  Private
 const getUser = asyncHandler(async (req, res) => {
-  const users = await User.find({}, 'firstName lastName profilePic');
-  res.status(200).json(users)
+  // Retrieve single user by user ID, retrieving only public details (no password)
+  const user = await User.findById(req.params.userId, '-password');
+
+  if (!user) {  // user not found in db, above query returns null
+    res.status(400);
+    throw new Error('User not found');
+  }
+  res.status(200).json(user)
 });
 
 // @desc    Get all users (public details)
