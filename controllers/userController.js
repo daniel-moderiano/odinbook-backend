@@ -14,16 +14,18 @@ const generateToken = (id) => {
 // @desc    Get a user (public details)
 // @route   GET /api/users/:userId
 // @access  Private
-const getUser = (req, res) => {
-
-}
+const getUser = asyncHandler(async (req, res) => {
+  const users = await User.find({}, 'firstName lastName profilePic');
+  res.status(200).json(users)
+});
 
 // @desc    Get all users (public details)
 // @route   GET /api/users
 // @access  Private
-const getUsers = (req, res) => {
-  
-}
+const getUsers = asyncHandler(async (req, res) => {
+  const users = await User.find({}, 'firstName lastName profilePic');
+  res.status(200).json(users)
+});
 
 // @desc    Register new user
 // @route   POST /api/users/register
@@ -122,4 +124,6 @@ module.exports = {
   registerUser,
   loginUser,
   getMe,
+  getUser,
+  getUsers
 }
