@@ -11,6 +11,20 @@ const generateToken = (id) => {
   });
 }
 
+// @desc    Get a user (public details)
+// @route   GET /api/users/:userId
+// @access  Private
+const getUser = (req, res) => {
+
+}
+
+// @desc    Get all users (public details)
+// @route   GET /api/users
+// @access  Private
+const getUsers = (req, res) => {
+  
+}
+
 // @desc    Register new user
 // @route   POST /api/users/register
 // @access  Public
@@ -18,6 +32,7 @@ const registerUser = [
   // Validate fields
   body('firstName', 'First name is required').trim().isLength({ min: 1 }),
   body('lastName', 'Last name is required').trim().isLength({ min: 1 }),
+  // Validating email input here ensures no mongo query is somehow captured into req.body.email
   body('email').trim().isLength({ min: 1 }).withMessage('Email is required').isEmail().withMessage('A valid email is required'),
   body('password', 'Minimum password length is 6 characters').trim().isLength({ min: 6 }),
 
@@ -63,9 +78,38 @@ const registerUser = [
 // @desc    Authenticate a user
 // @route   POST /api/users/login
 // @access  Public
-const loginUser = asyncHandler(async (req, res) => {
-  res.status(200).json({ user: 'User data' })
-});
+const loginUser = [
+  // Validate fields. isEmail prevents any mongo queries being passed as potential usernames, and removes the need for additional sanitisation
+  body('email').trim().isLength({ min: 1 }).withMessage('Email is required').isEmail().withMessage('Please enter a valid email'),
+  body('password', 'Password is required').trim().isLength({ min: 1 }),
+
+  // Process request after input data has been validated
+  asyncHandler(async (req, res, next) => {
+
+    // Extract the validation errors from a request
+    const errors = validationResult(req);
+
+    // Validation errors have occurred. Return these to the user
+    if (!errors.isEmpty()) {
+      res.status(400).json(errors.array());   // Do not throw single error here, pass and any all errors along
+    } else {
+      // Form data valid. Check for user in db and compare pw
+      const user = await User.findOne({ email: req.body.email });
+
+      if (user && (await bcrypt.compare(req.body.password, user.password))) { 
+        // User in db and passwords match. Return user and token to client
+        res.status(200).json({
+          _id: user._id,
+          username: user.email,
+          token: generateToken(user._id),
+        });  
+      } else {  // user not found in db OR passwords do not match. Can split this logic for specific errors if needed
+        res.status(400);
+        throw new Error('Invalid credentials');
+      }
+    }
+  }),
+];
 
 // @desc    Get current user data (requires actively logged in user)
 // @route   GET /api/users/me

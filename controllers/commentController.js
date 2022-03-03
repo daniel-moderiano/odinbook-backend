@@ -122,6 +122,7 @@ const likeComment = asyncHandler(async (req, res) => {
     await comment.save();
     res.status(200).json(comment)   // Return status OK and updated comment to client
   } else {
+    // Throw error if user attempts to duplicate likes
     res.status(400)
     throw new Error('Comment already liked');
   }

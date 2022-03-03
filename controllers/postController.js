@@ -62,15 +62,64 @@ const addPost = [
 // @desc    Update single post
 // @route   PUT /api/posts/:postId
 // @access  Private
-const updatePost = asyncHandler(async (req, res) => {
-  res.status(200).json({ post: 'Post data' })
-});
+const updatePost = [
+  // Validate text input. No sanitisation taking place here; this data is not used to execute any commands. Take care to sanitise as needed on frontend output/use
+  // TODO - once image upload is implemented, attempt to allow change in image, or image delete (with conditional empty text or image as above, but not both empty)
+  body('text', 'Post text is required').trim().isLength({ min: 1 }),
+
+  // Process request after input data has been validated
+  asyncHandler(async (req, res, next) => {
+
+    // Extract the validation errors from a request
+    const errors = validationResult(req);
+
+    // Validation errors have occurred. Return these to the user
+    if (!errors.isEmpty()) {
+      res.status(400).json(errors.array());   // Do not throw single error here, need to pass all errors to user instead
+    } else {
+      // Submitted data is valid
+      // Check if post exists in db
+      const post = await Post.findById(req.params.postId);
+
+      if (!post) {  // comment not found in db
+        res.status(400);
+        throw new Error('Post not found');
+      }
+
+      // Update comment in db
+      const updatedPost = await Post.findByIdAndUpdate(req.params.postId, {
+        text: req.body.text,
+      }, { new: true });  // { new: true } ensures the updated comment is returned
+
+      res.status(200).json(updatedPost);   // Return status OK and updated post to client
+    }
+  }),
+];
 
 // @desc    Like a single post (i.e. add new user to likes array)
 // @route   PUT /api/posts/:postId/likes
 // @access  Private
 const likePost = asyncHandler(async (req, res) => {
-  res.status(200).json({ post: 'Post data' })
+  // Check if post exists in db
+  const post = await Post.findById(req.params.postId);
+
+  if (!post) {  // post not found in db
+    res.status(400)
+    throw new Error('Post not found');
+  }
+
+  // Check if the user has already liked this post (i.e. their user ID already exists in likes array)
+  const alreadyLiked = post.likes.some((user) => user.equals(mongoose.Types.ObjectId(req.user._id)));
+
+  if (!alreadyLiked) {
+    post.likes.push(req.user._id);
+    await post.save();  // this acts as an update operation
+    res.status(200).json(comment)   // Return status OK and updated comment to client
+  } else {
+    // Throw error if user attempts to duplicate likes
+    res.status(400)
+    throw new Error('Post already liked');
+  }
 });
 
 // @desc    Delete single post

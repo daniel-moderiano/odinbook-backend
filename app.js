@@ -7,7 +7,6 @@ const app = express();
 const cors = require('cors');
 const { errorHandler } = require('./middleware/errorMiddleware');
 
-
 // Allow requests from any origin via CORS (limit with additional options as needed)
 app.use(cors())
 
