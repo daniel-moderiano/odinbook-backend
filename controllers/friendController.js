@@ -30,8 +30,9 @@ const modifyForSendRequest = (sender, recipient) => {
 // Adjust sender and recipient friend arrays when a request is to be accepted
 const modifyForAcceptRequest = (sender, recipient) => {
   // Find the friend requests amongst the array of friends
-  const incomingRequestIndex = sender.friends.findIndex((request) => request.user === recipient._id);
-  const outgoingRequestIndex = recipient.friends.findIndex((request) => request.user === sender._id);
+  const incomingRequestIndex = sender.friends.findIndex((request) => request.user.equals(recipient._id));
+  const outgoingRequestIndex = recipient.friends.findIndex((request) => request.user.equals(sender._id));
+  console.log(incomingRequestIndex, outgoingRequestIndex);
 
   // Modify the status values
   sender.friends[incomingRequestIndex].status = 'friend';
@@ -41,8 +42,8 @@ const modifyForAcceptRequest = (sender, recipient) => {
 // Adjust sender and recipient friend arrays when a request is to be cancelled
 const modifyForCancelRequest = (sender, recipient) => {
   // Find the friend requests amongst the array of friends
-  const outgoingRequestIndex = sender.friends.findIndex((request) => request.user === recipient._id);
-  const incomingRequestIndex = recipient.friends.findIndex((request) => request.user === sender._id);
+  const outgoingRequestIndex = sender.friends.findIndex((request) => request.user.equals(recipient._id));
+  const incomingRequestIndex = recipient.friends.findIndex((request) => request.user.equals(sender._id));
 
   // Modify the status values
   sender.friends.splice(outgoingRequestIndex, 1);
@@ -52,8 +53,8 @@ const modifyForCancelRequest = (sender, recipient) => {
 // Adjust sender and recipient friend arrays when a request is to be deleted
 const modifyForDeleteRequest = (sender, recipient) => {
   // Find the friend requests amongst the array of friends
-  const incomingRequestIndex = sender.friends.findIndex((request) => request.user === recipient._id);
-  const outgoingRequestIndex = recipient.friends.findIndex((request) => request.user === sender._id);
+  const incomingRequestIndex = sender.friends.findIndex((request) => request.user.equals(recipient._id));
+  const outgoingRequestIndex = recipient.friends.findIndex((request) => request.user.equals(sender._id));
 
   // Modify the status values
   sender.friends.splice(incomingRequestIndex, 1);
