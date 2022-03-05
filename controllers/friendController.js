@@ -10,20 +10,50 @@ const checkExistingEntries = (userId, friendsArray) => {
   }
 };
 
-const modifyForSendRequest = (sender, recipeint) => {
+// Adjust sender and recipient friend arrays when a request is to be sent
+const modifyForSendRequest = (sender, recipient) => {
+  sender.friends.push({   // add outgoing request to sender doc
+    user: recipient._id,
+    status: 'outgoingRequest'
+  });
 
+  recipient.friends.push({   // add incoming request to recipient doc
+    user: sender._id,
+    status: 'incomingRequest'
+  });
 };
 
-const modifyForAcceptRequest = (sender, recipeint) => {
+// Adjust sender and recipient friend arrays when a request is to be accepted
+const modifyForAcceptRequest = (sender, recipient) => {
+  // Find the friend requests amongst the array of friends
+  const incomingRequestIndex = sender.friends.findIndex((request) => request.user === recipient._id);
+  const outgoingRequestIndex = recipient.friends.findIndex((request) => request.user === sender._id);
 
+  // Modify the status values
+  sender.friends[incomingRequestIndex].status = 'friend';
+  recipient.friends[outgoingRequestIndex].status = 'friend';
 };
 
-const modifyForCancelRequest = (sender, recipeint) => {
+// Adjust sender and recipient friend arrays when a request is to be cancelled
+const modifyForCancelRequest = (sender, recipient) => {
+  // Find the friend requests amongst the array of friends
+  const outgoingRequestIndex = sender.friends.findIndex((request) => request.user === recipient._id);
+  const incomingRequestIndex = recipient.friends.findIndex((request) => request.user === sender._id);
 
+  // Modify the status values
+  sender.friends.splice(outgoingRequestIndex, 1);
+  recipient.friends.splice(incomingRequestIndex, 1);
 };
 
-const modifyForDeleteRequest = (sender, recipeint) => {
+// Adjust sender and recipient friend arrays when a request is to be deleted
+const modifyForDeleteRequest = (sender, recipient) => {
+  // Find the friend requests amongst the array of friends
+  const incomingRequestIndex = sender.friends.findIndex((request) => request.user === recipient._id);
+  const outgoingRequestIndex = recipient.friends.findIndex((request) => request.user === sender._id);
 
+  // Modify the status values
+  sender.friends.splice(incomingRequestIndex, 1);
+  recipient.friends[outgoingRequestIndex].status = 'deletedRequest';
 };
 
 
@@ -70,7 +100,7 @@ const handleFriendRequest = async (req, res) => {
         throw new Error('Request does not exist from this user');
       }
 
-      // Request able to be accepted. Adjust recipeint and sender's friends as needed
+      // Request able to be accepted. Adjust recipient and sender's friends as needed
       // ! No push function here, instead modiy the existing friend entry
       requestRecipient.friends.push({   // add incoming request to recipient doc
         user: req.user._id,
