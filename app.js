@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const postRoutes = require('./routes/postRoutes');
 const userRoutes = require('./routes/userRoutes');
+const friendRoutes = require('./routes/friendRoutes');
 const app = express();
 const cors = require('cors');
 const { errorHandler } = require('./middleware/errorMiddleware');
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: false }));
 // Use routes
 app.use('/api/posts', postRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/friends', friendRoutes);
 
 // Use error handler AFTER all routes are defined above
 app.use(errorHandler);

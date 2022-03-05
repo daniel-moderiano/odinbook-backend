@@ -1,4 +1,7 @@
 const { checkExistingEntries, modifyForAcceptRequest, modifyForCancelRequest, modifyForDeleteRequest, modifyForSendRequest } = require('../controllers/friendController');
+const mongoose = require('mongoose');
+
+// TODO: Convert these to proper ObjectIDs to fit with .equals() function
 
 const sender = {
   _id: 'ron',

@@ -1,10 +1,11 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/UserModel');
+const mongoose = require('mongoose');
 
 // Use this function to ensure that no duplicate requests are sent, and that certain request types exist before performing related actions  
 const checkExistingEntries = (userId, friendsArray) => {
-  // Identify existing request for the user in the friendsArray provided. There should never be more than one existing entry
-  const existingRequests = friendsArray.filter((request) => request.user === userId);
+  // Identify existing request for the user in the friendsArray provided. There should never be more than one existing entry. NOTE: .equals() must be used to compare ObjectID types here.
+  const existingRequests = friendsArray.filter((request) => request.user.equals(userId));
 
   if (existingRequests.length === 0) {  // No request exists, exit function here
     return null;
@@ -60,15 +61,17 @@ const modifyForDeleteRequest = (sender, recipient) => {
 };
 
 
-// Expected API route would be PUT api/friends/:userId
+// @desc    Handle all friend requests
+// @route   PUT /api/friends/:userId
+// @access  Private
 const handleFriendRequest = asyncHandler(async (req, res) => {
   // Req.user will contain the sender's details
   // When clicking on another user's details, their ID should be captured and passed into the req.params.userId for example
   // In all friend request functions, the requestSender describes the currently logged in user that is making a request of some kind, be it sending, accepting, cancelling, or deleting. The recepient describes the user that is the target of the sender's request, again regardless of if the sender if sending a request to that user, or accepting a request from that user
-  const requestRecipient = await User.findById(req.params.userId, 'firstName lastName profilePic friends');
-  const requestSender = await User.findById(req.user._id, 'firstName lastName profilePic friends');
-
-  if (!requestRecipient) {  // user not found in db
+  const sender = await User.findById(req.user._id, 'firstName lastName profilePic friends');
+  const recipient = await User.findById(req.params.userId, 'firstName lastName profilePic friends');
+  
+  if (!recipient) {  // user not found in db
     res.status(400);
     throw new Error('User not found');
   } 
@@ -78,7 +81,7 @@ const handleFriendRequest = asyncHandler(async (req, res) => {
 
   // Incoming req.body will contain the type of operation required. Perform logic as needed
   switch (req.body.requestType) {
-    case 'sendRequest':   // user is sending a friend request to another user
+    case 'sendRequest':   // user is sending a friend request to another user 
       if (!existingRequest) {
         // Request able to be sent. Adjust receipeint and sender's friends as needed
         modifyForSendRequest(sender, recipient);
@@ -138,12 +141,14 @@ const handleFriendRequest = asyncHandler(async (req, res) => {
       }
 
     default:
-      break;
+      // No request type or incorrect request type provided
+      res.status(400);
+      throw new Error('Request type missing or invalid');
   }
 
   // Save these changes to the db
-  const updatedRecipient = await requestRecipient.save();
-  await requestSender.save();
+  const updatedRecipient = await recipient.save();
+  await sender.save();
 
   // Return information of recipient (to populate a 'request sent to: ' messaged in frontend. Check that password is not being sent here though!)
   res.json(updatedRecipient);
