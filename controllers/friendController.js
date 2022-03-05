@@ -33,42 +33,43 @@ const deletedRequestExists = (userId, friendsArray) => {
   ));
 };
 
-// ! Friend structure may need to be modified to the following
-const friendRequest 
-
 // Consider abstracting the different logic in the hadnle func below, e.g. func for send, accept, delete, and cancel request
 
 // Both users are initialised with empty friend arrays. Friend request operations and desired outcomes will be brainstormed below.
 
-const sendFriendRequest = (sender, recipient) => {
-  // Check all relevant cases where a new request cannot be sent
-  if (outgoingRequestExists(recipient._id, sender.friends)) {
-    res.status(400);
-    throw new Error('Request has already been sent to this user');
-  }
+// const sendFriendRequest = (sender, recipient) => {
+//   // Check all relevant cases where a new request cannot be sent
+//   if (outgoingRequestExists(recipient._id, sender.friends)) {
+//     res.status(400);
+//     throw new Error('Request has already been sent to this user');
+//   }
 
-  if (incomingRequestExists(recipient._id, sender.friends)) {
-    res.status(400);
-    throw new Error('Request already exists from this user');
-  }
+//   if (incomingRequestExists(recipient._id, sender.friends)) {
+//     res.status(400);
+//     throw new Error('Request already exists from this user');
+//   }
 
-  if (deletedRequestExists(recipient._id, sender.friends)) {
-    res.status(400);
-    throw new Error('User has denied your request');
-  }
+//   if (deletedRequestExists(recipient._id, sender.friends)) {
+//     res.status(400);
+//     throw new Error('User has denied your request');
+//   }
 
-  // Request able to be sent. Adjust receipeint and sender's friends as needed
-  recipient.friends.push({   // add incoming request to recipient doc
-    user: req.user._id,
-    status: 'incomingRequest'
-  });
+//   // Request able to be sent. Adjust receipeint and sender's friends as needed
+//   recipient.friends.push({   // add incoming request to recipient doc
+//     user: req.user._id,
+//     status: 'incomingRequest'
+//   });
 
-  sender.friends.push({   // add outgoing request to sender doc
-    user: req.params.userId,
-    status: 'outgoingRequest'
-  });
+//   sender.friends.push({   // add outgoing request to sender doc
+//     user: req.params.userId,
+//     status: 'outgoingRequest'
+//   });
 
-  return 
+//   return 
+// }
+
+const checkExistingEntries = (userId, friendsArray) => {
+
 }
 
 // ! PUT can be done using any data you manually enter in the request body from the front end! Can specify type of update there!
@@ -102,6 +103,8 @@ const handleFriendRequest = async (req, res) => {
         res.status(400);
         throw new Error('User has denied your request');
       }
+
+      // ! Check if freind exists!! 
 
       // Request able to be sent. Adjust receipeint and sender's friends as needed
       requestRecipient.friends.push({   // add incoming request to recipient doc
@@ -213,3 +216,7 @@ const test = [
     { user: '1277', status: 'outgoingRequest' },
     { user: '1234', status: 'incomingRequest' },
 ]
+
+module.exports = {
+  checkExistingEntries,
+}
