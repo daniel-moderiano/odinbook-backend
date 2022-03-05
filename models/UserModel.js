@@ -13,7 +13,7 @@ const userSchema = new Schema(
         user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
         status: {
           type: String,
-          enum: ['friend', 'incomingRequest', 'outgoingRequest'],
+          enum: ['friend', 'incomingRequest', 'outgoingRequest', 'deletedRequest'],
         } // All 'friends' will have an associated status marking them as current friend, incoming, or outgoing friend request
       }
     ],

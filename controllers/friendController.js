@@ -69,7 +69,16 @@ const deletedRequestExists = (userId, friendsArray) => {
 // }
 
 const checkExistingEntries = (userId, friendsArray) => {
+  // Identify existing request for the user in the friendsArray provided. There should never be more than one existing
+  const existingRequests = friendsArray.filter((request) => request.user === userId);
 
+  console.log(friendsArray);
+
+  if (existingRequests.length === 0) {  // No request exists, exit function here
+    return null;
+  } else {  // Existing request is present. Return type of request.
+    return existingRequests[0].status;
+  }
 }
 
 // ! PUT can be done using any data you manually enter in the request body from the front end! Can specify type of update there!
