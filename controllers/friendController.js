@@ -61,6 +61,7 @@ const modifyForDeleteRequest = (sender, recipient) => {
   recipient.friends[outgoingRequestIndex].status = 'deletedRequest';
 };
 
+// TODO: User that has deleted a request from another user can still send them a request. This generates duplicates! Solutions include not retaining any record of a deleted/denied request, or altering send request to search for existing delete requests on past users and replacing this with outgoing, thus removing the deleted status
 
 // @desc    Handle all friend requests
 // @route   PUT /api/friends/:userId
@@ -79,6 +80,7 @@ const handleFriendRequest = asyncHandler(async (req, res) => {
 
   // Check for existing requests
   const existingRequest = checkExistingEntries(recipient._id, sender.friends);
+  console.log(existingRequest);
 
   // Incoming req.body will contain the type of operation required. Perform logic as needed
   switch (req.body.requestType) {
@@ -120,7 +122,7 @@ const handleFriendRequest = asyncHandler(async (req, res) => {
       }
 
     case 'deleteRequest':   // user is deleting a friend request from another user
-      if (existingRequest === 'deletedRequest') {
+      if (existingRequest === 'incomingRequest') {
         // Request able to be deleted. Adjust receipeint and sender's friends as needed
         modifyForDeleteRequest(sender, recipient);
         break;
