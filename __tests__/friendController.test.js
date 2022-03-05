@@ -110,5 +110,17 @@ describe("Modification functions make the correct adjustments to sender and reci
     modifyForSendRequest(sender, recipient);
     expect(recipient.friends[0].status).toBe('incomingRequest');
   });
+
+  test("Sending a request does not stack with a previous deletedRequest in recipient array for that user", () => {
+    recipient.friends = [{ user: sender._id, status: 'deletedRequest' }];
+    modifyForSendRequest(sender, recipient);
+    expect(recipient.friends.length).toBe(1);
+  });
+
+  test("Sending a request replaces a previous deletedRequest in recipient array with a new incoming request", () => {
+    recipient.friends = [{ user: sender._id, status: 'deletedRequest' }];
+    modifyForSendRequest(sender, recipient);
+    expect(recipient.friends[0].status).toBe('incomingRequest');
+  });
 });
 

@@ -21,10 +21,17 @@ const modifyForSendRequest = (sender, recipient) => {
     status: 'outgoingRequest'
   });
 
-  recipient.friends.push({   // add incoming request to recipient doc
-    user: sender._id,
-    status: 'incomingRequest'
-  });
+  // Check for existing delete request in recipient's array (i.e. the sender has previously deleted/denied a request from this user)
+  const deletedRequestIndex = recipient.friends.findIndex((request) => (request.user.equals(sender._id) && request.status === 'deletedRequest'));
+
+  if (deletedRequestIndex === -1) {   // no deletedRequest exists, send normal request
+    recipient.friends.push({   // add incoming request to recipient doc
+      user: sender._id,
+      status: 'incomingRequest'
+    });
+  } else {    // deletedRequest exists. Modify this to incoming request to avoid request duplicates
+    recipient.friends[deletedRequestIndex].status = 'incomingRequest';
+  }
 };
 
 // Adjust sender and recipient friend arrays when a request is to be accepted
