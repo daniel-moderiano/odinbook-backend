@@ -39,7 +39,6 @@ const modifyForAcceptRequest = (sender, recipient) => {
   // Find the friend requests amongst the array of friends
   const incomingRequestIndex = sender.friends.findIndex((request) => request.user.equals(recipient._id));
   const outgoingRequestIndex = recipient.friends.findIndex((request) => request.user.equals(sender._id));
-  console.log(incomingRequestIndex, outgoingRequestIndex);
 
   // Modify the status values
   sender.friends[incomingRequestIndex].status = 'friend';
@@ -68,9 +67,8 @@ const modifyForDeleteRequest = (sender, recipient) => {
   recipient.friends[outgoingRequestIndex].status = 'deletedRequest';
 };
 
-// TODO: User that has deleted a request from another user can still send them a request. This generates duplicates! Solutions include not retaining any record of a deleted/denied request, or altering send request to search for existing delete requests on past users and replacing this with outgoing, thus removing the deleted status
 
-// @desc    Handle all friend requests
+// @desc    Handle all friend requests. API call MUST specify requestType in the request body
 // @route   PUT /api/friends/:userId
 // @access  Private
 const handleFriendRequest = asyncHandler(async (req, res) => {
@@ -87,7 +85,6 @@ const handleFriendRequest = asyncHandler(async (req, res) => {
 
   // Check for existing requests
   const existingRequest = checkExistingEntries(recipient._id, sender.friends);
-  console.log(existingRequest);
 
   // Incoming req.body will contain the type of operation required. Perform logic as needed
   switch (req.body.requestType) {
