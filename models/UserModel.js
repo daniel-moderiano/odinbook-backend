@@ -23,8 +23,11 @@ const userSchema = new Schema(
       education: { type: String, default: '' },
       gender: { type: String, default: '' }  // Almost considered enums for a second...
     },
-    // TODO profile picture support - look at Multer + Mongo + Cloudinary setup
-    profilePic: { type: String, default: '' }
+    // Images to be managed by Cloudinary. ImageUrl provides a link to the image to display on frontend, imageId is the cloudinary ID that can be used to reference images for deletion
+    profilePic: { 
+      imageId: String,
+      imageUrl: String,
+    }
   },
   {
     timestamps: true, // Adds createdAt and updatedAt timestamps automatically
