@@ -2,7 +2,8 @@ const asyncHandler = require('express-async-handler');
 const Post = require('../models/PostModel');
 const User = require('../models/UserModel');
 const { body, validationResult } = require("express-validator");
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const upload = require('../config/multer');
 
 // @desc    Get all posts
 // @route   GET /api/posts
@@ -30,12 +31,15 @@ const getPost = asyncHandler(async (req, res) => {
 // @route   POST /api/posts
 // @access  Private
 const addPost = [
+
+  upload.single('image'),
   // Validate text input. No sanitisation taking place here; this data is not used to execute any commands. Take care to sanitise as needed on frontend output/use
   // TODO - once image upload is implemented, we can allow for empty post text provided an image is uploaded
   body('text', 'Post text is required').trim().isLength({ min: 1 }),
 
   // Process request after input data has been validated
   asyncHandler(async (req, res, next) => {
+    console.log(req.file);
 
     // Extract the validation errors from a request
     const errors = validationResult(req);
@@ -53,7 +57,7 @@ const addPost = [
       res.status(400).json(errors.array());   // Do not throw single error here, pass all validation errors to client
     } else {
       // Form data is valid. Save to db
-      await newPost.save();
+      // await newPost.save();
       // Add new comment to the current post's comments array, using the newly created comment ID
       res.status(200).json(newPost)   // Return status OK and new comment to client
     }
