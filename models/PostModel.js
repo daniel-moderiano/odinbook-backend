@@ -9,13 +9,16 @@ const postSchema = new Schema(
       ref: 'User', 
       required: true  
     },
-    text: { type: String, required: true }, 
+    text: String, 
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     comments: [
       { type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }
     ],
-    // TODO image/media support
-    imageUrl: { type: String, default: '' },
+    // Images to be managed by Cloudinary. ImageUrl provides a link to the image to display on frontend, imageId is the cloudinary ID that can be used to reference images for deletion
+    image: { 
+      imageId: String,
+      imageUrl: String,
+    }
   },
   {
     timestamps: true, // Adds createdAt and updatedAt timestamps automatically
