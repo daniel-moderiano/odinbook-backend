@@ -126,14 +126,20 @@ const loginUser = [
 
 // @desc    Update user details
 // @route   PUT /api/users
-// @access  Public
+// @access  Private
 const updateUser = [
+  // Upload any profile picture added
+  upload.single('image'),
+  
   // Validate fields
   body('firstName', 'First name is required').trim().isLength({ min: 1 }),
   body('lastName', 'Last name is required').trim().isLength({ min: 1 }),
   // Validating email input here ensures no mongo query is somehow captured into req.body.email
   body('email').trim().isLength({ min: 1 }).withMessage('Email is required').isEmail().withMessage('A valid email is required'),
-  body('password', 'Minimum password length is 6 characters').trim().isLength({ min: 6 }),
+  body('location', 'Location is too long (max 200 characters)').trim().isLength({ max: 200 }),
+  body('occupation', 'Occupation is too long (max 200 characters)').trim().isLength({ max: 200 }),
+  body('education', 'Education is too long (max 200 characters)').trim().isLength({ max: 200 }),
+  body('gender', 'Gender is too long (max 50 characters)').trim().isLength({ max: 50 }),
 
   // Process request after input data has been validated
   asyncHandler(async (req, res, next) => {
@@ -145,31 +151,37 @@ const updateUser = [
     if (!errors.isEmpty()) {
       res.status(400).json(errors.array());   // Do not throw single error here, pass all validation errors
     } else {
-      // Check for existing user in db
-      const userExists = await User.findOne({ email: req.body.email });
+      // Submitted data is valid
+      // Check if user exists in db
+      const user = await User.findById(req.params.userId);
 
-      if (userExists) {
+      if (!user) {  // comment not found in db
         res.status(400);
-        throw new Error('Email already taken')
+        throw new Error('User not found');
       }
-      // User is unique. Create hashed pw and save user to db
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-      // Create new user with all required data
-      const newUser = new User({
+      // Update user in db
+      const updatedUser = await User.findByIdAndUpdate(req.params.userId, {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
-        password: hashedPassword, 
-        friends: [],
-      });
-
-      await newUser.save();
-      res.status(200).json({
-        _id: newUser._id,
-        username: newUser.username,
-        token: generateToken(newUser._id),
-      });   // Return status OK and new post to client
+        profilePic: req.file && {
+          imageId: req.file.filename,
+          imageUrl: req.file.path,
+        },
+        bio: {
+          location: req.body.location ? req.body.location : undefined,
+          occupation: req.body.occupation ? req.body.occupation : undefined,
+          education: req.body.education ? req.body.education : undefined,
+          gender: req.body.gender ? req.body.gender : undefined
+        },
+      }, { 
+        new: true,
+        projection: {   // do not return password to client
+          password: 0,
+        } 
+      });  // { new: true } ensures the updated user is returned
+      res.status(200).json(updatedUser);   // Return status OK and updated user to client (select details only)
     }
   }),
 ];
