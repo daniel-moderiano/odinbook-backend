@@ -3,6 +3,9 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/UserModel');
 const { body, validationResult } = require("express-validator");
+const upload = require('../config/multer');
+const cloudinary = require('cloudinary').v2;
+const config = require('../config/cloudinary');
 
 // Note req.params.id of any kind is cast to ObjectID before a search query is run. Therefore, injection attacks do not have a foothold here (error will be thrown regardless).
 
@@ -121,9 +124,80 @@ const loginUser = [
   }),
 ];
 
+// @desc    Update user details
+// @route   PUT /api/users
+// @access  Public
+const updateUser = [
+  // Validate fields
+  body('firstName', 'First name is required').trim().isLength({ min: 1 }),
+  body('lastName', 'Last name is required').trim().isLength({ min: 1 }),
+  // Validating email input here ensures no mongo query is somehow captured into req.body.email
+  body('email').trim().isLength({ min: 1 }).withMessage('Email is required').isEmail().withMessage('A valid email is required'),
+  body('password', 'Minimum password length is 6 characters').trim().isLength({ min: 6 }),
+
+  // Process request after input data has been validated
+  asyncHandler(async (req, res, next) => {
+
+    // Extract the validation errors from a request
+    const errors = validationResult(req);
+
+    // Validation errors have occurred. Return these to the user
+    if (!errors.isEmpty()) {
+      res.status(400).json(errors.array());   // Do not throw single error here, pass all validation errors
+    } else {
+      // Check for existing user in db
+      const userExists = await User.findOne({ email: req.body.email });
+
+      if (userExists) {
+        res.status(400);
+        throw new Error('Email already taken')
+      }
+      // User is unique. Create hashed pw and save user to db
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+      // Create new user with all required data
+      const newUser = new User({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        password: hashedPassword, 
+        friends: [],
+      });
+
+      await newUser.save();
+      res.status(200).json({
+        _id: newUser._id,
+        username: newUser.username,
+        token: generateToken(newUser._id),
+      });   // Return status OK and new post to client
+    }
+  }),
+];
+
+// @desc    Delete single user
+// @route   DELETE /api/user/:userId
+// @access  Private
+const deleteUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.userId);
+
+  if (!user) {  // User not found in db
+    res.status(400);
+    throw new Error('User not found');
+  }
+  // Remove image from cloudinary if image exists
+  if (user.profilePic) {
+    cloudinary.uploader.destroy(user.profilePic.imageId);
+  }
+  // User found with no errors; remove from db
+  await user.remove();
+  res.status(200).json({ id: req.params.userId }); // Might consider returning the deleted user itself here?
+});
+
 module.exports = {
   registerUser,
   loginUser,
   getUser,
-  getUsers
+  getUsers,
+  deleteUser,
+  updateUser
 }
