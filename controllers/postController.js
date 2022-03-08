@@ -4,6 +4,8 @@ const User = require('../models/UserModel');
 const { body, validationResult } = require("express-validator");
 const mongoose = require('mongoose');
 const upload = require('../config/multer');
+const cloudinary = require('cloudinary').v2;
+const config = require('../config/cloudinary');
 
 // @desc    Get all posts
 // @route   GET /api/posts
@@ -31,12 +33,8 @@ const getPost = asyncHandler(async (req, res) => {
 // @route   POST /api/posts
 // @access  Private
 const addPost = [
-  // Validate text input. No sanitisation taking place here; this data is not used to execute any commands. Take care to sanitise as needed on frontend output/use
-
-  // body('text', 'Post text is required').trim().isLength({ min: 1 }),
   upload.single('image'),
   // Check for either post text OR image upload to allow a user to post imagae only or text only, but not a post with neither
-  // body('text').trim().isLength({ min: 1 }).withMessage('Post text requiresd'),
   body('text').custom((value, { req }) => {
     if ((!value || value.trim().length === 0) && !req.file) {   // neither text nor image has been provided
       throw new Error('Post text or image is required');
@@ -79,7 +77,7 @@ const addPost = [
 // @access  Private
 const updatePost = [
   // Validate text input. No sanitisation taking place here; this data is not used to execute any commands. Take care to sanitise as needed on frontend output/use
-  // TODO - once image upload is implemented, attempt to allow change in image, or image delete (with conditional empty text or image as above, but not both empty)
+  // TODO image handling
   body('text', 'Post text is required').trim().isLength({ min: 1 }),
 
   // Process request after input data has been validated
@@ -146,6 +144,10 @@ const deletePost = asyncHandler(async (req, res) => {
   if (!post) {  // Post not found in db
     res.status(400);
     throw new Error('Post not found');
+  }
+  // Remove image from cloudinary if image exists
+  if (post.image) {
+    cloudinary.uploader.destroy(post.image.imageId);
   }
   // Post found with no errors; remove from db
   await post.remove();
