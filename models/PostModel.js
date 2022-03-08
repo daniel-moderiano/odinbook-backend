@@ -9,7 +9,7 @@ const postSchema = new Schema(
       ref: 'User', 
       required: true  
     },
-    text: { type: String, required: true }, 
+    text: String, 
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     comments: [
       { type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }

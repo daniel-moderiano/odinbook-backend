@@ -31,16 +31,22 @@ const getPost = asyncHandler(async (req, res) => {
 // @route   POST /api/posts
 // @access  Private
 const addPost = [
-
-  upload.single('image'),
   // Validate text input. No sanitisation taking place here; this data is not used to execute any commands. Take care to sanitise as needed on frontend output/use
-  // TODO - once image upload is implemented, we can allow for empty post text provided an image is uploaded
-  body('text', 'Post text is required').trim().isLength({ min: 1 }),
+
+  // body('text', 'Post text is required').trim().isLength({ min: 1 }),
+  upload.single('image'),
+  // Check for either post text OR image upload to allow a user to post imagae only or text only, but not a post with neither
+  // body('text').trim().isLength({ min: 1 }).withMessage('Post text requiresd'),
+  body('text').custom((value, { req }) => {
+    if ((!value || value.trim().length === 0) && !req.file) {   // neither text nor image has been provided
+      throw new Error('Post text or image is required');
+    }
+    // User has included one of either text or image. Continue with request handling
+    return true;
+  }),
 
   // Process request after input data has been validated
   asyncHandler(async (req, res, next) => {
-    console.log(req.file);
-
     // Extract the validation errors from a request
     const errors = validationResult(req);
 
@@ -50,6 +56,10 @@ const addPost = [
       text: req.body.text, 
       likes: [],
       comments: [],
+      image: req.file && {
+        imageId: req.file.filename,
+        imageUrl: req.file.path,
+      }
     });
 
     // Validation errors have occurred. Return these to the user is JSON format
@@ -57,7 +67,7 @@ const addPost = [
       res.status(400).json(errors.array());   // Do not throw single error here, pass all validation errors to client
     } else {
       // Form data is valid. Save to db
-      // await newPost.save();
+      await newPost.save();
       // Add new comment to the current post's comments array, using the newly created comment ID
       res.status(200).json(newPost)   // Return status OK and new comment to client
     }
