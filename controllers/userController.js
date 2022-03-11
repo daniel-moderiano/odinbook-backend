@@ -79,10 +79,14 @@ const registerUser = [
       });
 
       await newUser.save();
+
+      // Attach user ID to current session to ensure user can be identified on subsequent requests
+      // req.session.userId = newUser._id;
+
       res.status(200).json({
         _id: newUser._id,
-        username: newUser.username,
-        token: generateToken(newUser._id),
+        username: newUser.email,
+        // token: generateToken(newUser._id),
       });   // Return status OK and new post to client
     }
   }),
@@ -110,11 +114,14 @@ const loginUser = [
       const user = await User.findOne({ email: req.body.email });
 
       if (user && (await bcrypt.compare(req.body.password, user.password))) { 
+        // Attach user ID to current session to ensure user can be identified on subsequent requests
+        req.session.userId = user._id;
+
         // User in db and passwords match. Return user and token to client
         res.status(200).json({
           _id: user._id,
           username: user.email,
-          token: generateToken(user._id),
+          // token: generateToken(user._id),
         });  
       } else {  // user not found in db OR passwords do not match. Can split this logic for specific errors if needed
         res.status(400);
