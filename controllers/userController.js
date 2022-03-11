@@ -131,6 +131,22 @@ const loginUser = [
   }),
 ];
 
+// @desc    Logout a user (end session)
+// @route   POST /api/users/logout
+// @access  Public
+const logoutUser = asyncHandler(async (req, res) => {
+  if (!req.session) {   // session does not exists, user has already logged out/is not logged in
+    res.status(400);
+    throw new Error('Unable to log out')
+  }
+
+  // Session exists. Regardless of whether userId is present or not it should be destroyed
+  req.session.destroy();
+  res.status(200).json({  // Return status OK and logout message
+    message: 'Log out successful'
+  });   
+});
+
 // @desc    Update user details
 // @route   PUT /api/users
 // @access  Private
@@ -218,5 +234,6 @@ module.exports = {
   getUser,
   getUsers,
   deleteUser,
-  updateUser
+  updateUser,
+  logoutUser
 }
