@@ -1,5 +1,4 @@
 const asyncHandler = require('express-async-handler');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/UserModel');
 const { body, validationResult } = require("express-validator");
@@ -8,13 +7,6 @@ const cloudinary = require('cloudinary').v2;
 const config = require('../config/cloudinary');
 
 // Note req.params.id of any kind is cast to ObjectID before a search query is run. Therefore, injection attacks do not have a foothold here (error will be thrown regardless).
-
-// Generate JWT
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '30d'
-  });
-}
 
 // @desc    Get a user (public details)
 // @route   GET /api/users/:userId
@@ -79,14 +71,12 @@ const registerUser = [
       });
 
       await newUser.save();
-
       // Attach user ID to current session to ensure user can be identified on subsequent requests
-      // req.session.userId = newUser._id;
+      req.session.userId = newUser._id;
 
       res.status(200).json({
         _id: newUser._id,
         username: newUser.email,
-        // token: generateToken(newUser._id),
       });   // Return status OK and new post to client
     }
   }),
@@ -117,11 +107,10 @@ const loginUser = [
         // Attach user ID to current session to ensure user can be identified on subsequent requests
         req.session.userId = user._id;
 
-        // User in db and passwords match. Return user and token to client
+        // User in db and passwords match. Return user to client
         res.status(200).json({
           _id: user._id,
           username: user.email,
-          // token: generateToken(user._id),
         });  
       } else {  // user not found in db OR passwords do not match. Can split this logic for specific errors if needed
         res.status(400);
