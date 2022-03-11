@@ -1,4 +1,4 @@
-// Define all app-related functionality here, incluyding use of middleware and routes. Do not call server listen func here.
+// Define all app-related functionality here, including use of middleware and routes. Do not call server listen func here.
 require('dotenv').config();
 const express = require('express');
 const postRoutes = require('./routes/postRoutes');
@@ -37,11 +37,6 @@ app.use(session({
 
 // Make available req.user on all requests when a user is currently logged in
 app.use(addUserToRequestObject);
-
-app.use((req, res, next) => {
-  console.log(req.user, req.session);
-  return next();
-});
 
 // Use routes
 app.use('/api/posts', postRoutes);

@@ -30,6 +30,20 @@ const getUsers = asyncHandler(async (req, res) => {
   res.status(200).json(users)
 });
 
+// @desc    Return the currently logged in user
+// @route   GET /api/users/current
+// @access  Private
+const getCurrentUser = asyncHandler(async (req, res) => {
+  // Retrieve current user from DB using req.user ID. Do not expose password here
+  const user = await User.findById(req.user._id, { 'firstName': 1, 'lastName': 1, 'email': 1 });
+
+  if (!user) {  // user not found in db, above query returns null
+    res.status(400);
+    throw new Error('User not found');
+  }
+  res.status(200).json(user);
+});
+
 // @desc    Register new user
 // @route   POST /api/users/register
 // @access  Public
@@ -224,5 +238,6 @@ module.exports = {
   getUsers,
   deleteUser,
   updateUser,
-  logoutUser
+  logoutUser,
+  getCurrentUser
 }
