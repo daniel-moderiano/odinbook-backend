@@ -35,11 +35,6 @@ app.use(session({
   // }
 }));
 
-app.get('/', (req, res, next) => {
-  // console.log(req.session);
-  res.send('Hello World')
-});
-
 // Make available req.user on all requests when a user is currently logged in
 app.use(addUserToRequestObject);
 

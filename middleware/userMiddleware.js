@@ -23,7 +23,6 @@ const addUserToRequestObject = asyncHandler(async (req, res, next) => {
 
   // Add user information to request object
   req.user = user;
-
   next();
 });
 
