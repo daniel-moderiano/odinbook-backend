@@ -19,7 +19,9 @@ const getUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('User not found');
   }
-  res.status(200).json(user)
+  res.status(200).json({
+    user: user
+  })
 });
 
 // @desc    Get all users (public details)
@@ -27,7 +29,9 @@ const getUser = asyncHandler(async (req, res) => {
 // @access  Private
 const getUsers = asyncHandler(async (req, res) => {
   const users = await User.find({}, 'firstName lastName profilePic');
-  res.status(200).json(users)
+  res.status(200).json({
+    users: users
+  })
 });
 
 // @desc    Return the currently logged in user
@@ -41,7 +45,9 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('User not found');
   }
-  res.status(200).json(user);
+  res.status(200).json({
+    user: user
+  });
 });
 
 // @desc    Register new user
@@ -96,8 +102,10 @@ const registerUser = [
       req.session.userId = newUser._id;
 
       res.status(200).json({
-        _id: newUser._id,
-        username: newUser.email,
+        user: {
+          _id: newUser._id,
+          email: newUser.email,
+        }
       });   // Return status OK and new post to client
     }
   }),
@@ -130,8 +138,10 @@ const loginUser = [
 
         // User in db and passwords match. Return user to client
         res.status(200).json({
-          _id: user._id,
-          username: user.email,
+          user: {
+            _id: user._id,
+            email: user.email,
+          }
         });  
       } else {  // user not found in db OR passwords do not match. Can split this logic for specific errors if needed
         res.status(400);
@@ -214,7 +224,9 @@ const updateUser = [
           password: 0,
         } 
       });  // { new: true } ensures the updated user is returned
-      res.status(200).json(updatedUser);   // Return status OK and updated user to client (select details only)
+      res.status(200).json({
+        user: updatedUser
+      });   // Return status OK and updated user to client (select details only)
     }
   }),
 ];
@@ -235,7 +247,11 @@ const deleteUser = asyncHandler(async (req, res) => {
   }
   // User found with no errors; remove from db
   await user.remove();
-  res.status(200).json({ id: req.params.userId }); // Might consider returning the deleted user itself here?
+  res.status(200).json({
+    user: { 
+      id: req.params.userId 
+    }
+  }); // Might consider returning the deleted user itself here?
 });
 
 module.exports = {
