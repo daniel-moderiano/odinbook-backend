@@ -11,8 +11,11 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const { addUserToRequestObject } = require('./middleware/userMiddleware');
 
-// Allow requests from any origin via CORS (limit with additional options as needed)
-app.use(cors())
+// Allow requests from any frontend domain specifically. Credientials must be true to allow cookies
+app.use(cors({
+  origin: 'http://localhost:3001',
+  credentials: true
+}));
 
 // Inbuilt express body parsers
 app.use(express.json());
@@ -34,6 +37,11 @@ app.use(session({
   //   maxAge: 604800000
   // }
 }));
+
+// app.use((req, res, next) => {
+//   console.log(req.session, req.user);
+//   next();
+// })
 
 // Make available req.user on all requests when a user is currently logged in
 app.use(addUserToRequestObject);

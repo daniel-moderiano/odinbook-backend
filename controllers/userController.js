@@ -54,6 +54,13 @@ const registerUser = [
   // Validating email input here ensures no mongo query is somehow captured into req.body.email
   body('email').trim().isLength({ min: 1 }).withMessage('Email is required').isEmail().withMessage('A valid email is required'),
   body('password', 'Minimum password length is 6 characters').trim().isLength({ min: 6 }),
+  body('confirmPassword').custom((value, { req }) => {
+    if (value !== req.body.password) {
+      throw new Error('Password confirmation does not match password');
+    }
+    // Indicates the success of this validator, i.e. passwords match
+    return true;
+  }),
 
   // Process request after input data has been validated
   asyncHandler(async (req, res, next) => {
@@ -70,7 +77,7 @@ const registerUser = [
 
       if (userExists) {
         res.status(400);
-        throw new Error('Email already taken')
+        throw new Error('Email already in use')
       }
       // User is unique. Create hashed pw and save user to db
       const hashedPassword = await bcrypt.hash(req.body.password, 10);

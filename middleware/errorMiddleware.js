@@ -11,7 +11,7 @@ const errorHandler = (err, req, res, next) => {
   res.status(statusCode);
   // Return JSON instead of the default HTML error template by Express
   res.json({
-    message: err.message,
+    errorMsg: err.message,
     stack: process.env.NODE_ENV === 'production' ? undefined : err.stack // Do not add stack for production apps
   });
 };
