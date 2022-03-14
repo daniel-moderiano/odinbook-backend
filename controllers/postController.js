@@ -16,11 +16,12 @@ const getPosts = asyncHandler(async (req, res) => {
     .populate('user', 'firstName lastName profilePic')
     .populate({
       path: 'comments',
-      populate: { path: 'user', select: 'firstName lastName profilePic' }
+      populate: { path: 'user', select: 'firstName lastName profilePic' },
+      populate: { path: 'likes', select: 'firstName lastName profilePic' }
     })
     .populate({
       path: 'likes',
-      populate: { path: 'user', select: 'firstName lastName profilePic' }
+      select: 'firstName lastName profilePic'
     })
   res.status(200).json(posts)
 });
@@ -34,11 +35,12 @@ const getPost = asyncHandler(async (req, res) => {
     .populate('user', 'firstName lastName profilePic')
     .populate({
       path: 'comments',
-      populate: { path: 'user', select: 'firstName lastName profilePic' }
+      populate: { path: 'user', select: 'firstName lastName profilePic' },
+      populate: { path: 'likes', select: 'firstName lastName profilePic' }
     })
     .populate({
       path: 'likes',
-      populate: { path: 'user', select: 'firstName lastName profilePic' }
+      select: 'firstName lastName profilePic'
     })
 
   if (!post) {  // post not found in db, above query returns null
