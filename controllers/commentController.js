@@ -12,7 +12,19 @@ const mongoose = require('mongoose');
 // @access  Private
 const getComments = asyncHandler(async (req, res) => {
   // Find comments via post ID, and use projection + populate to retrieve the comments array with comment details
-  const post = await Post.findById(req.params.postId, 'comments').populate('comments');
+  const post = await Post.findById(req.params.postId, 'comments')
+    .populate({
+      path: 'comments',
+      populate: { path: 'user', select: 'firstName lastName profilePic' },
+    })
+    .populate({
+      path: 'comments',
+      populate: { 
+        path: 'likes',
+        select: 'firstName lastName profilePic',
+      },
+    })
+
   res.status(200).json(post.comments)
 });
 
@@ -21,7 +33,12 @@ const getComments = asyncHandler(async (req, res) => {
 // @access  Private
 const getComment = asyncHandler(async (req, res) => {
   // Search db by comment ID directly, and populate only the user info to be displayed on the UI
-  const comment = await Comment.findById(req.params.commentId).populate('user', 'firstName lastName profilePic');
+  const comment = await Comment.findById(req.params.commentId)
+    .populate('user', 'firstName lastName profilePic')
+    .populate({
+      path: 'likes',
+      select: 'firstName lastName profilePic',
+    })
 
   if (!comment) {  // comment not found in db
     res.status(400)
