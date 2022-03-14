@@ -11,6 +11,7 @@ const postSchema = new Schema(
     },
     text: String, 
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    // It is understood that for a large scale app with thousands of potential comments, the better Schema design is having postID attached to individual comments, and no comments array in the post. Because this is a small scale app, the simpler solution is used here
     comments: [
       { type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }
     ],

@@ -12,7 +12,16 @@ const config = require('../config/cloudinary');
 // @route   GET /api/posts
 // @access  Private
 const getPosts = asyncHandler(async (req, res) => {
-  const posts = await Post.find({});
+  const posts = await Post.find({})
+    .populate('user', 'firstName lastName profilePic')
+    .populate({
+      path: 'comments',
+      populate: { path: 'user', select: 'firstName lastName profilePic' }
+    })
+    .populate({
+      path: 'likes',
+      populate: { path: 'user', select: 'firstName lastName profilePic' }
+    })
   res.status(200).json(posts)
 });
 
@@ -21,7 +30,16 @@ const getPosts = asyncHandler(async (req, res) => {
 // @access  Private
 const getPost = asyncHandler(async (req, res) => {
   // Retrieve post and populate only those user details required for display on posts (virtual 'fullName' can be called when first and last name are populated)
-  const post = await Post.findById(req.params.postId).populate('user', 'firstName lastName profilePic');
+  const post = await Post.findById(req.params.postId)
+    .populate('user', 'firstName lastName profilePic')
+    .populate({
+      path: 'comments',
+      populate: { path: 'user', select: 'firstName lastName profilePic' }
+    })
+    .populate({
+      path: 'likes',
+      populate: { path: 'user', select: 'firstName lastName profilePic' }
+    })
 
   if (!post) {  // post not found in db, above query returns null
     res.status(400);
