@@ -46,4 +46,10 @@ userSchema
     return `${this.firstName} ${this.lastName}`;
   })
 
+userSchema.virtual('posts', {
+  ref: 'Post',
+  localField: '_id',
+  foreignField: 'user'
+});
+
 module.exports = mongoose.model('User', userSchema);

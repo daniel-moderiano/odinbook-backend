@@ -14,7 +14,8 @@ const config = require('../config/cloudinary');
 // @access  Private
 const getUser = asyncHandler(async (req, res) => {
   // Retrieve single user by user ID, retrieving only public details (no password)
-  const user = await User.findById(req.params.userId, '-password');
+  const user = await User.findById(req.params.userId, '-password')
+    .populate('posts')
 
   if (!user) {  // user not found in db, above query returns null
     res.status(400);
@@ -270,8 +271,26 @@ const getUserPosts = asyncHandler(async (req, res) => {
 // @access  Private
 const getUserFeed = asyncHandler(async (req, res) => {
   // TODO
+  // Use the virtual 'posts' for each user in the friends list. This will create a combined list of all friends' posts
 });
 
+// @desc    Get all friends/friend requests of a user
+// @route   GET /api/user/:userId/friends
+// @access  Private
+const getUserFriends = asyncHandler(async (req, res) => {
+  // Retrieve single user by user ID, retrieving only friends list (but full populated data)
+  const user = await User.findById(req.params.userId, 'friends')
+    .populate({
+      path: 'friends',
+      populate: { path: 'user', select: 'firstName lastName profilePic' },
+    })
+
+  if (!user) {  // user not found in db, above query returns null
+    res.status(400);
+    throw new Error('User not found');
+  }
+  res.status(200).json(user.friends)
+});
 
 
 module.exports = {
@@ -284,5 +303,6 @@ module.exports = {
   logoutUser,
   getCurrentUser,
   getUserPosts,
-  getUserFeed
+  getUserFeed,
+  getUserFriends
 }

@@ -175,6 +175,7 @@ const deletePost = asyncHandler(async (req, res) => {
   res.status(200).json({ id: req.params.postId }); // Might consider returning the deleted post itself here
 });
 
+
 module.exports = {
   getAllPosts,
   getPost,
