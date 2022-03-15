@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const { DateTime } = require('luxon');
 
 // Schema for user. Requires  
 const userSchema = new Schema(
@@ -38,7 +39,6 @@ const userSchema = new Schema(
 
 );
 
-// TODO Virtual for 'date joined' using timestamp?
 // Virtual for user's full name
 userSchema  
   .virtual('fullName')
@@ -50,6 +50,11 @@ userSchema.virtual('posts', {
   ref: 'Post',
   localField: '_id',
   foreignField: 'user'
+});
+
+// Returns date joined in the form 'March 15, 2022'
+userSchema.virtual('dateJoined') .get(function() {
+  return DateTime.fromJSDate(this.createdAt).toLocaleString(DateTime.DATE_FULL);
 });
 
 module.exports = mongoose.model('User', userSchema);

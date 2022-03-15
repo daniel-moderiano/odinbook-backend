@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const { DateTime } = require('luxon');
 
 // Comment model describes user-submitted comments associated with specific posts. (though this connection is defined in the User model) Comments should display the user who posted the comment, the date/time posted, and should allow likes
 const commentSchema = new Schema(
@@ -19,7 +20,15 @@ const commentSchema = new Schema(
   } 
 );
 
-// TODO Virtual for number of likes
-// TODO Virtual for timestamp (short date, e.g. 3 d, then hover for full timestamp year/time)
+// Returns date posted in the form 'March 15, 2022'
+commentSchema.virtual('dateAdded') .get(function() {
+  return DateTime.fromJSDate(this.createdAt).toLocaleString(DateTime.DATE_FULL);
+});
+
+// Return the total number of likes on a comment
+commentSchema.virtual('numLikes') .get(function() {
+  return this.likes.length;
+});
+
 
 module.exports = mongoose.model('Comment', commentSchema);

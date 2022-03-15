@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const { DateTime } = require('luxon');
 
 // Schema for odinbook/facebook 'post'. Will include likes and comments, and likes should be linked to the user who liked the post. Supports img urls. 
 const postSchema = new Schema(
@@ -28,8 +29,20 @@ const postSchema = new Schema(
   } 
 );
 
-// TODO Virtual for number of likes
-// TODO Virtual for number of comments
-// TODO Virtual for timestamp
+
+// Return the total number of likes on a post
+postSchema.virtual('numLikes') .get(function() {
+  return this.likes.length;
+});
+
+// Return the total number of comments on a post
+postSchema.virtual('numComments') .get(function() {
+  return this.comments.length;
+});
+
+// Returns date posted in the form 'March 15, 2022'
+postSchema.virtual('datePosted') .get(function() {
+  return DateTime.fromJSDate(this.createdAt).toLocaleString(DateTime.DATE_FULL);
+});
 
 module.exports = mongoose.model('Post', postSchema);
