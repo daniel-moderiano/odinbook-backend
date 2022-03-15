@@ -6,6 +6,7 @@ const { body, validationResult } = require("express-validator");
 const upload = require('../config/multer');
 const cloudinary = require('cloudinary').v2;
 const config = require('../config/cloudinary');
+const mongoose = require('mongoose')
 
 // Note req.params.id of any kind is cast to ObjectID before a search query is run. Therefore, injection attacks do not have a foothold here (error will be thrown regardless).
 
@@ -270,8 +271,30 @@ const getUserPosts = asyncHandler(async (req, res) => {
 // @route   GET /api/user/:userId/feed
 // @access  Private
 const getUserFeed = asyncHandler(async (req, res) => {
-  // TODO
   // Use the virtual 'posts' for each user in the friends list. This will create a combined list of all friends' posts
+    // Retrieve single user by user ID, retrieving only friends list (but full populated data)
+  const user = await User.findById(req.params.userId, 'friends')
+    .populate({
+      path: 'friends',
+      populate: { 
+        path: 'user', 
+        select: 'firstName lastName profilePic', 
+        populate: { path: 'posts' }
+      },
+    });
+
+  if (!user) {  // user not found in db, above query returns null
+    res.status(400);
+    throw new Error('User not found');
+  }
+
+  // Convert user doc to JS object to reveal virtuals (not revealed until doc is cast into Object or JSON), and extract the array of friends specifically
+  const userFriends = user.friends.toObject();
+
+  // Multi-step array operation: create new array with each friend mapped to their own array of posts, then flatten this new array to remove nesting and empty arrays (friends that had no posts map to empty arrays). The result is a single-depth array of posts only, representing all posts from a user's friends
+  const postFeed = (userFriends.map((friend) => (friend.user.posts))).flat();
+  
+  res.status(200).json(postFeed)
 });
 
 // @desc    Get all friends/friend requests of a user
