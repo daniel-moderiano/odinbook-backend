@@ -27,11 +27,15 @@ const userSchema = new Schema(
     profilePic: { 
       imageId: String,
       imageUrl: String,
-    }
+    },
   },
+  
   {
     timestamps: true, // Adds createdAt and updatedAt timestamps automatically
-  }
+    toJSON: { virtuals: true },   // Ensures res.json() provides the virtuals when this model is populated
+    toObject: { virtuals: true },
+  },
+
 );
 
 // TODO Virtual for 'date joined' using timestamp?

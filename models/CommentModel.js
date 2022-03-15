@@ -14,6 +14,8 @@ const commentSchema = new Schema(
   },
   {
     timestamps: true, // Adds createdAt and updatedAt timestamps automatically
+    toJSON: { virtuals: true },   // Ensures res.json() provides the virtuals when this model is populated
+    toObject: { virtuals: true },
   } 
 );
 

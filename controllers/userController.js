@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcryptjs');
 const User = require('../models/UserModel');
+const Post = require('../models/PostModel');
 const { body, validationResult } = require("express-validator");
 const upload = require('../config/multer');
 const cloudinary = require('cloudinary').v2;
@@ -254,6 +255,25 @@ const deleteUser = asyncHandler(async (req, res) => {
   }); // Might consider returning the deleted user itself here?
 });
 
+
+// @desc    Get all posts by a single user
+// @route   GET /api/user/:userId/posts
+// @access  Private
+const getUserPosts = asyncHandler(async (req, res) => {
+  const posts = await Post.find({ 'user': req.params.userId })
+  .populate('user', 'firstName lastName profilePic');
+  res.status(200).json(posts)
+});
+
+// @desc    Get all posts making up a user's feed
+// @route   GET /api/user/:userId/feed
+// @access  Private
+const getUserFeed = asyncHandler(async (req, res) => {
+  // TODO
+});
+
+
+
 module.exports = {
   registerUser,
   loginUser,
@@ -262,5 +282,7 @@ module.exports = {
   deleteUser,
   updateUser,
   logoutUser,
-  getCurrentUser
+  getCurrentUser,
+  getUserPosts,
+  getUserFeed
 }
