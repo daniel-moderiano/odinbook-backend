@@ -46,10 +46,11 @@ userSchema
     return `${this.firstName} ${this.lastName}`;
   })
 
+  // Virtual to populate all the posts by the user
 userSchema.virtual('posts', {
   ref: 'Post',
   localField: '_id',
-  foreignField: 'user'
+  foreignField: 'user',
 });
 
 // Returns date joined in the form 'March 15, 2022'

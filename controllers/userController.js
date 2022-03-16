@@ -274,6 +274,7 @@ const getUserFeed = asyncHandler(async (req, res) => {
   // Use the virtual 'posts' for each user in the friends list. This will create a combined list of all friends' posts
     // Retrieve single user by user ID, retrieving only friends list (but full populated data)
   const user = await User.findById(req.params.userId, 'friends')
+    .populate('posts')
     .populate({
       path: 'friends',
       populate: { 
@@ -288,13 +289,24 @@ const getUserFeed = asyncHandler(async (req, res) => {
     throw new Error('User not found');
   }
 
-  // Convert user doc to JS object to reveal virtuals (not revealed until doc is cast into Object or JSON), and extract the array of friends specifically
-  const userFriends = user.friends.toObject();
+  // Convert user doc to JS object to reveal virtuals (not revealed until doc is cast into Object or JSON)
+  const userObj = user.toObject();
+
+  // Extract array of user's own posts to later include in the feed
+  const userPosts = userObj.posts;
 
   // Multi-step array operation: create new array with each friend mapped to their own array of posts, then flatten this new array to remove nesting and empty arrays (friends that had no posts map to empty arrays). The result is a single-depth array of posts only, representing all posts from a user's friends
-  const postFeed = (userFriends.map((friend) => (friend.user.posts))).flat();
+  const friendPosts = (userObj.friends.map((friend) => (friend.user.posts))).flat();
+
+  // Combine friend posts with user's posts for the overall feed (unsorted)
+  const feed = userPosts.concat(friendPosts);
+
+  // Sort the feed by date posted using native JS date comparisons
+  const sortedFeed = postFeed.sort((a, b) => {
+    return (a.createdAt < b.createdAt) ? 1 : ((a.createdAt > b.createdAt) ? -1 : 0);
+  });
   
-  res.status(200).json(postFeed)
+  res.status(200).json(sortedFeed);
 });
 
 // @desc    Get all friends/friend requests of a user
