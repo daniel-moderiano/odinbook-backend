@@ -16,7 +16,6 @@ const mongoose = require('mongoose')
 const getUser = asyncHandler(async (req, res) => {
   // Retrieve single user by user ID, retrieving only public details (no password)
   const user = await User.findById(req.params.userId, '-password')
-    .populate('posts')
 
   if (!user) {  // user not found in db, above query returns null
     res.status(400);
@@ -299,7 +298,7 @@ const getUserFeed = asyncHandler(async (req, res) => {
   const friendPosts = (userObj.friends.map((friend) => (friend.user.posts))).flat();
 
   // Combine friend posts with user's posts for the overall feed (unsorted)
-  const feed = userPosts.concat(friendPosts);
+  const postFeed = userPosts.concat(friendPosts);
 
   // Sort the feed by date posted using native JS date comparisons
   const sortedFeed = postFeed.sort((a, b) => {
@@ -313,7 +312,7 @@ const getUserFeed = asyncHandler(async (req, res) => {
 // @route   GET /api/user/:userId/friends
 // @access  Private
 const getUserFriends = asyncHandler(async (req, res) => {
-  // Retrieve single user by user ID, retrieving only friends list (but full populated data)
+  // Retrieve single user by user ID, retrieving only friends list (but full populated data) and virtuals for different types of friend requests
   const user = await User.findById(req.params.userId, 'friends')
     .populate({
       path: 'friends',
@@ -324,7 +323,16 @@ const getUserFriends = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('User not found');
   }
-  res.status(200).json(user.friends)
+
+  // Take the raw friends array and sort into individual groups based on friendEntry status.
+  // It is possible to delegate this to frontend users or backend server. Because of the small scale of this app, the choice is trivial, but has been considered none the less.
+  const sortedFriends = {
+    acceptedFriends: user.friends.filter((friendEntry) => friendEntry.status === 'friend'),
+    incomingRequests: user.friends.filter((friendEntry) => friendEntry.status === 'incomingRequest'),
+    outgoingRequests: user.friends.filter((friendEntry) => friendEntry.status === 'outgoingRequest'),
+  }
+
+  res.status(200).json(sortedFriends)
 });
 
 

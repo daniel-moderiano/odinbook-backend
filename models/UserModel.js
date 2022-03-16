@@ -46,7 +46,7 @@ userSchema
     return `${this.firstName} ${this.lastName}`;
   })
 
-  // Virtual to populate all the posts by the user
+  // Virtual to populate all the posts by the user 
 userSchema.virtual('posts', {
   ref: 'Post',
   localField: '_id',
@@ -54,8 +54,9 @@ userSchema.virtual('posts', {
 });
 
 // Returns date joined in the form 'March 15, 2022'
-userSchema.virtual('dateJoined') .get(function() {
+userSchema.virtual('dateJoined').get(function() {
   return DateTime.fromJSDate(this.createdAt).toLocaleString(DateTime.DATE_FULL);
 });
+
 
 module.exports = mongoose.model('User', userSchema);
