@@ -58,5 +58,4 @@ userSchema.virtual('dateJoined').get(function() {
   return DateTime.fromJSDate(this.createdAt).toLocaleString(DateTime.DATE_FULL);
 });
 
-
 module.exports = mongoose.model('User', userSchema);

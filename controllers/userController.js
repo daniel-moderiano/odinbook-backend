@@ -266,20 +266,26 @@ const getUserPosts = asyncHandler(async (req, res) => {
   res.status(200).json(posts)
 });
 
-// @desc    Get all posts making up a user's feed
+// @desc    Get all posts making up a user's feed, sorted by date recency (consider limiting to past X months only)
 // @route   GET /api/user/:userId/feed
 // @access  Private
 const getUserFeed = asyncHandler(async (req, res) => {
   // Use the virtual 'posts' for each user in the friends list. This will create a combined list of all friends' posts
     // Retrieve single user by user ID, retrieving only friends list (but full populated data)
   const user = await User.findById(req.params.userId, 'friends')
-    .populate('posts')
+    .populate({
+      path: 'posts',
+      populate: { path: 'user', select: 'firstName lastName profilePic' } 
+    })
     .populate({
       path: 'friends',
       populate: { 
         path: 'user', 
-        select: 'firstName lastName profilePic', 
-        populate: { path: 'posts' }
+        // select: 'firstName lastName profilePic', 
+        populate: { 
+          path: 'posts',
+          populate: { path: 'user', select: 'firstName lastName profilePic' } 
+        }
       },
     });
 
@@ -308,7 +314,7 @@ const getUserFeed = asyncHandler(async (req, res) => {
   res.status(200).json(sortedFeed);
 });
 
-// @desc    Get all friends/friend requests of a user
+// @desc    Get all friends/friend requests of a user sorted by request status
 // @route   GET /api/user/:userId/friends
 // @access  Private
 const getUserFriends = asyncHandler(async (req, res) => {
