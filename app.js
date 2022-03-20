@@ -13,7 +13,7 @@ const { addUserToRequestObject } = require('./middleware/userMiddleware');
 
 // Allow requests from any frontend domain specifically. Credientials must be true to allow cookies
 app.use(cors({
-  origin: 'http://localhost:3001',
+  origin: 'http://localhost:3006',
   credentials: true
 }));
 

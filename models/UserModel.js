@@ -53,6 +53,19 @@ userSchema.virtual('posts', {
   foreignField: 'user',
 });
 
+userSchema.virtual('numFriends').get(function() {
+  // Do not attempt to return numFriends if the user does not have a friends array (this covers those cases where client requests user data that does not include friends in the projection). Because virtuals: true is set, this virtual will always try to call on every user request regardless of projections
+  if (!this.friends) {
+    return;
+  }
+
+  if (this.friends.length !== 0) {
+    return this.friends.filter((friend) => friend.status === 'friend').length;
+  } else {
+    return 0;
+  }
+})
+
 // Returns date joined in the form 'March 15, 2022'
 userSchema.virtual('dateJoined').get(function() {
   return DateTime.fromJSDate(this.createdAt).toLocaleString(DateTime.DATE_FULL);
