@@ -1,7 +1,5 @@
-const { checkExistingEntries, modifyForAcceptRequest, modifyForCancelRequest, modifyForDeleteRequest, modifyForSendRequest } = require('../controllers/friendController');
+const { checkExistingEntries, modifyForAcceptRequest, modifyForCancelRequest, modifyForDeleteRequest, modifyForSendRequest, modifyForUnfriendRequest } = require('../controllers/friendController');
 const mongoose = require('mongoose');
-
-// TODO: Convert these to proper ObjectIDs to fit with .equals() function
 
 const sender = {
   _id: mongoose.Types.ObjectId('569ed8269353e9f4c51617aa'),
@@ -121,6 +119,14 @@ describe("Modification functions make the correct adjustments to sender and reci
     recipient.friends = [{ user: sender._id, status: 'deletedRequest' }];
     modifyForSendRequest(sender, recipient);
     expect(recipient.friends[0].status).toBe('incomingRequest');
+  });
+
+  test("Unfriending someone removes friend entries from both sender and recipient friends array", () => {
+    recipient.friends = [{ user: sender._id, status: 'friend' }];
+    sender.friends = [{ user: recipient._id, status: 'friend' }];
+    modifyForUnfriendRequest(sender, recipient);
+    expect(recipient.friends.length).toBe(0);
+    expect(sender.friends.length).toBe(0);
   });
 });
 

@@ -67,6 +67,17 @@ const modifyForDeleteRequest = (sender, recipient) => {
   recipient.friends[outgoingRequestIndex].status = 'deletedRequest';
 };
 
+// Adjust sender and recipient friend arrays when a request is made to unfriend someone
+const modifyForUnfriendRequest = (sender, recipient) => {
+  // Find the friend requests amongst the array of friends
+  const incomingRequestIndex = recipient.friends.findIndex((request) => request.user.equals(sender._id));
+  const outgoingRequestIndex = sender.friends.findIndex((request) => request.user.equals(recipient._id));
+
+  // Remove the array entries on both ends
+  sender.friends.splice(outgoingRequestIndex, 1);
+  recipient.friends.splice(incomingRequestIndex, 1);
+};
+
 
 // @desc    Handle all friend requests. API call MUST specify requestType in the request body
 // @route   PUT /api/friends/:userId
@@ -167,5 +178,6 @@ module.exports = {
   modifyForCancelRequest,
   modifyForSendRequest,
   modifyForDeleteRequest,
+  modifyForUnfriendRequest,
   handleFriendRequest
 }
