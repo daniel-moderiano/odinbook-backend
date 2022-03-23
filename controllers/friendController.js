@@ -158,6 +158,17 @@ const handleFriendRequest = asyncHandler(async (req, res) => {
         throw new Error('Request does not exist');
       }
 
+    case 'unfriendRequest':   // user is unfriending an existing friend
+      if (existingRequest === 'friend') {
+        // Request able to be deleted. Adjust receipeint and sender's friends as needed
+        modifyForUnfriendRequest(sender, recipient);
+        break;
+      } else {
+        // Request cannot be accepted (none available)
+        res.status(400);
+        throw new Error('Cannot unfriend a user you are not friends with');
+      }
+
     default:
       // No request type or incorrect request type provided
       res.status(400);
