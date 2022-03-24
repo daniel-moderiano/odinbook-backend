@@ -31,17 +31,17 @@ const postSchema = new Schema(
 
 
 // Return the total number of likes on a post
-postSchema.virtual('numLikes') .get(function() {
+postSchema.virtual('numLikes').get(function() {
   return this.likes.length;
 });
 
 // Return the total number of comments on a post
-postSchema.virtual('numComments') .get(function() {
+postSchema.virtual('numComments').get(function() {
   return this.comments.length;
 });
 
 // Returns date posted in the form 'March 15, 2022'
-postSchema.virtual('datePosted') .get(function() {
+postSchema.virtual('datePosted').get(function() {
   return DateTime.fromJSDate(this.createdAt).toLocaleString(DateTime.DATE_FULL);
 });
 
