@@ -262,7 +262,8 @@ const deleteUser = asyncHandler(async (req, res) => {
 // @access  Private
 const getUserPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find({ 'user': req.params.userId })
-  .populate('user', 'firstName lastName profilePic');
+  .populate('user', 'firstName lastName profilePic')
+  .populate('comments')
   res.status(200).json(posts)
 });
 
