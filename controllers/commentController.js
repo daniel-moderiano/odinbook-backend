@@ -75,9 +75,10 @@ const addComment = [
       // Form data is valid. Save to db
       const savedComment = await newComment.save();
       // Add new comment to the current post's comments array, using the newly created comment ID
+      // Use of the $each operator says 'for each item in the array you provide me, push it into the array at the $position specifiec'. In this case, newer comments are at the front of the array
       await Post.findByIdAndUpdate(
         req.params.postId, 
-        { $push: { "comments": savedComment._id } },
+        { $push: { "comments": { $each: [savedComment._id], $position: 0 } } },
         { new: true }
       );
       res.status(200).json(newComment)   // Return status OK and new comment to client
