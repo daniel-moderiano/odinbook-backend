@@ -275,7 +275,8 @@ const getUserFeed = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.userId, 'friends')
     .populate({
       path: 'posts',
-      populate: { path: 'user', select: 'firstName lastName profilePic' } 
+      populate: { path: 'user', select: 'firstName lastName profilePic' }, 
+      populate: { path: 'comments' } 
     })
     .populate({
       path: 'friends',
