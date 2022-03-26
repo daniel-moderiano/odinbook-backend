@@ -276,7 +276,10 @@ const getUserFeed = asyncHandler(async (req, res) => {
     .populate({
       path: 'posts',
       populate: { path: 'user', select: 'firstName lastName profilePic' }, 
-      populate: { path: 'comments' } 
+    })
+    .populate({
+      path: 'posts',
+      populate: { path: 'comments' }
     })
     .populate({
       path: 'friends',
