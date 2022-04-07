@@ -41,7 +41,7 @@ const getUsers = asyncHandler(async (req, res) => {
 // @access  Private
 const getCurrentUser = asyncHandler(async (req, res) => {
   // Retrieve current user from DB using req.user ID. Do not expose password here
-  const user = await User.findById(req.user._id, { 'firstName': 1, 'lastName': 1, 'email': 1 });
+  const user = await User.findById(req.user._id, { 'firstName': 1, 'lastName': 1, 'email': 1, 'profilePic': 1 });
 
   if (!user) {  // user not found in db, above query returns null
     res.status(400);
@@ -170,7 +170,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 // @desc    Update user details
-// @route   PUT /api/users
+// @route   PUT /api/users/:userId
 // @access  Private
 const updateUser = [
   // Upload any profile picture added

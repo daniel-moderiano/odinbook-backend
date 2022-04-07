@@ -55,7 +55,7 @@ const getPost = asyncHandler(async (req, res) => {
 // @access  Private
 const addPost = [
   upload.single('image'),
-  // Check for either post text OR image upload to allow a user to post imagae only or text only, but not a post with neither
+  // Check for either post text OR image upload to allow a user to post image only or text only, but not a post with neither
   body('text').custom((value, { req }) => {
     if ((!value || value.trim().length === 0) && !req.file) {   // neither text nor image has been provided
       throw new Error('Post text or image is required');
@@ -98,12 +98,20 @@ const addPost = [
 // @access  Private
 const updatePost = [
   // Validate text input. No sanitisation taking place here; this data is not used to execute any commands. Take care to sanitise as needed on frontend output/use
-  // TODO image handling
-  body('text', 'Post text is required').trim().isLength({ min: 1 }),
+
+  // Image upload should occur to handle any new image the user may have added in the update
+  upload.single('image'),
+  // Check for either post text OR image upload to allow a user to post image only or text only, but not a post with neither
+  body('text').custom((value, { req }) => {
+    if ((!value || value.trim().length === 0) && !req.file) {   // neither text nor image has been provided
+      throw new Error('Post text or image is required');
+    }
+    // User has included one of either text or image. Continue with request handling
+    return true;
+  }),
 
   // Process request after input data has been validated
   asyncHandler(async (req, res, next) => {
-
     // Extract the validation errors from a request
     const errors = validationResult(req);
 
@@ -120,12 +128,35 @@ const updatePost = [
         throw new Error('Post not found');
       }
 
-      // Update comment in db
-      const updatedPost = await Post.findByIdAndUpdate(req.params.postId, {
-        text: req.body.text,
-      }, { new: true });  // { new: true } ensures the updated comment is returned
+      // If the user has updated the image (imageUpdated === true), the previous image should be removed from Cloudinary.
+      // A new image property should be created if a new image exists, otherwise a blank property is used to overwrite the existing image data
+      // Booleans cannot be set in form data object, so check for string version of boolean
+      if (req.body.imageUpdated === 'true') {
+        cloudinary.uploader.destroy(post.image.imageId);
+        if (req.file) {
+          post.image = {
+            imageId: req.file.filename,
+            imageUrl: req.file.path,
+          }
+        } else {
+          post.image = undefined;
+        }
+      };
 
-      res.status(200).json(updatedPost);   // Return status OK and updated post to client
+      post.text = req.body.text;
+    
+      await post.save()
+
+
+      // Update comment in db
+      // const updatedPost = await Post.findByIdAndUpdate(req.params.postId, {
+      //   text: req.body.text,
+      //   image: undefined,
+      // }, { new: true });  // { new: true } ensures the updated comment is returned
+
+      // console.log(updatedPost);
+
+      res.status(200).json(post);   // Return status OK and updated post to client
     }
   }),
 ];
