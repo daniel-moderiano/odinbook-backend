@@ -144,18 +144,8 @@ const updatePost = [
       };
 
       post.text = req.body.text;
-    
       await post.save()
-
-
-      // Update comment in db
-      // const updatedPost = await Post.findByIdAndUpdate(req.params.postId, {
-      //   text: req.body.text,
-      //   image: undefined,
-      // }, { new: true });  // { new: true } ensures the updated comment is returned
-
-      // console.log(updatedPost);
-
+      
       res.status(200).json(post);   // Return status OK and updated post to client
     }
   }),
