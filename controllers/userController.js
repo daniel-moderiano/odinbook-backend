@@ -172,10 +172,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 // @desc    Update user details
 // @route   PUT /api/users/:userId
 // @access  Private
-const updateUser = [
-  // Upload any profile picture added
-  upload.single('image'),
-  
+const updateUser = [ 
   // Validate fields
   body('firstName', 'First name is required').trim().isLength({ min: 1 }),
   body('lastName', 'Last name is required').trim().isLength({ min: 1 }),
@@ -188,7 +185,7 @@ const updateUser = [
 
   // Process request after input data has been validated
   asyncHandler(async (req, res, next) => {
-
+    console.log(req.body);
     // Extract the validation errors from a request
     const errors = validationResult(req);
 
@@ -198,40 +195,77 @@ const updateUser = [
     } else {
       // Submitted data is valid
       // Check if user exists in db
-      const user = await User.findById(req.params.userId);
+      const user = await User.findById(req.params.userId, { 'password': 0 });
 
       if (!user) {  // comment not found in db
         res.status(400);
         throw new Error('User not found');
       }
 
-      // Update user in db
-      const updatedUser = await User.findByIdAndUpdate(req.params.userId, {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        profilePic: req.file && {
-          imageId: req.file.filename,
-          imageUrl: req.file.path,
-        },
-        bio: {
-          location: req.body.location ? req.body.location : undefined,
-          occupation: req.body.occupation ? req.body.occupation : undefined,
-          education: req.body.education ? req.body.education : undefined,
-          gender: req.body.gender ? req.body.gender : undefined
-        },
-      }, { 
-        new: true,
-        projection: {   // do not return password to client
-          password: 0,
-        } 
-      });  // { new: true } ensures the updated user is returned
-      res.status(200).json({
-        user: updatedUser
-      });   // Return status OK and updated user to client (select details only)
+      user.firstName = req.body.firstName,
+      user.lastName = req.body.lastName,
+      user.email = req.body.email,
+      user.bio = {
+        location: req.body.location ? req.body.location : undefined,
+        occupation: req.body.occupation ? req.body.occupation : undefined,
+        education: req.body.education ? req.body.education : undefined,
+        gender: req.body.gender ? req.body.gender : undefined
+      };
+
+      await user.save();
+ 
+      res.status(200).json(user);   // Return status OK and updated user to client
     }
   }),
 ];
+
+// @desc    Update user profile pic 
+// @route   PUT /api/users/:userId/profile-pic
+// @access  Private
+const updateUserPic = [
+  // Upload any profile picture added
+  upload.single('image'),
+  
+  // Process request after input data has been validated
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request
+    const errors = validationResult(req);
+
+    // Validation errors have occurred. Return these to the user
+    if (!errors.isEmpty()) {
+      res.status(400).json(errors.array());   // Do not throw single error here, pass all validation errors
+    } else {
+      // Submitted data is valid
+      // Check if user exists in db
+      const user = await User.findById(req.params.userId, { 'password': 0 });
+
+      if (!user) {  // comment not found in db
+        res.status(400);
+        throw new Error('User not found');
+      }
+
+      // If the user has updated their profile pic (imageUpdated === true), the previous image should be removed from Cloudinary.
+      // A new image property should be created if a new image exists, otherwise a blank property is used to overwrite the existing image data
+      // Booleans cannot be set in form data object, so check for string version of boolean
+      if (req.body.imageUpdated === 'true') {
+        // cloudinary.uploader.destroy(post.image.imageId);
+        if (req.file) {
+          user.profilePic = {
+            imageId: req.file.filename,
+            imageUrl: req.file.path,
+          }
+        } else {
+          user.profilePic = undefined;
+        }
+      }
+
+      await user.save();
+ 
+      res.status(200).json(user);   // Return status OK and updated user to client
+    }
+  }),
+];
+
 
 // @desc    Delete single user
 // @route   DELETE /api/user/:userId
@@ -354,6 +388,7 @@ module.exports = {
   getUsers,
   deleteUser,
   updateUser,
+  updateUserPic,
   logoutUser,
   getCurrentUser,
   getUserPosts,
