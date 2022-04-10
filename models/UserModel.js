@@ -8,7 +8,7 @@ const userSchema = new Schema(
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true },  // serves as a username
-    password: { type: String, required: true }, 
+    password: String,   // not explicitly required as this would cause problems in the case of Facebook-linked accounts
     friends: [
       {
         user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -29,6 +29,7 @@ const userSchema = new Schema(
       imageId: String,
       imageUrl: String,
     },
+    facebookId: String,   // set to the profileID provided by facebook when the user authenticates via FB. Used for FB account lookup
   },
   
   {
