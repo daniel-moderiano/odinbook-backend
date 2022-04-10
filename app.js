@@ -33,15 +33,7 @@ app.use(session({
   store: sessionStore,
   resave: false,
   saveUninitialized: true,
-  // cookie: {
-  //   maxAge: 604800000
-  // }
 }));
-
-// app.use((req, res, next) => {
-//   console.log(req.session, req.user);
-//   next();
-// })
 
 // Make available req.user on all requests when a user is currently logged in
 app.use(addUserToRequestObject);
