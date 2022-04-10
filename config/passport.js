@@ -4,6 +4,7 @@ const FacebookStrategy = require('passport-facebook').Strategy;
 const asyncHandler = require('express-async-handler');
 require('dotenv').config();
 
+// Essentially a config object for the FB passport strategy that links it with the Odinbook (ob) app on Facebook Developers
 const strategyOptions = {
   clientID: process.env['FACEBOOK_APP_ID'],
   clientSecret: process.env['FACEBOOK_APP_SECRET'],
@@ -27,6 +28,7 @@ const verifyCallback = asyncHandler(async (accessToken, refreshToken, profile, d
       friends: [],
     });
 
+    // Save new user account and pass to callback function to move to next middleware
     await newUser.save();
     return done(null, newUser);
   }
@@ -36,6 +38,7 @@ const strategy = new FacebookStrategy(strategyOptions, verifyCallback);
 
 passport.use(strategy);
 
+// Required functions for the passport middleware. No customaisation required
 passport.serializeUser(function(user, done) {
   done(null, user);
 });

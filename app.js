@@ -44,6 +44,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Perform authentication when the user hits this route
+// Must scope email as this requires additional permissions from the user
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 
 // Present a message when the user successfully authenticates with FB
@@ -51,8 +52,8 @@ app.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/' }),
   function(req, res) {
     console.log(req.session, req.user);
-    // Successful authentication, redirect home.
-    res.send('Successful login');
+    // Successful authentication, redirect to frontend client URL.
+    res.redirect('http://localhost:3006');
   });
 
 // This is a local app logout; it does not log the user out of facebook itself
