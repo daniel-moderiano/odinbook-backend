@@ -10,6 +10,7 @@ const { errorHandler } = require('./middleware/errorMiddleware');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const { addUserToRequestObject } = require('./middleware/userMiddleware');
+const passport = require('passport');
 
 // Allow requests from any frontend domain specifically. Credientials must be true to allow cookies
 app.use(cors({
@@ -34,6 +35,28 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
 }));
+
+
+
+// PASSPORT 
+require('./config/passport');
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Perform authentication when the user hits this route
+app.get('/auth/facebook', passport.authenticate('facebook'));
+
+// Present a message when the user successfully authenticates with FB
+app.get('/auth/facebook/callback', (req, res) => {
+  res.send('Logged in')
+})
+
+// This is a local app logout; it does not log the user out of facebook itself
+app.get('/logout', (req, res) => {
+  req.session = null;
+  req.logout();
+  res.redirect('/');
+})
 
 // Make available req.user on all requests when a user is currently logged in
 app.use(addUserToRequestObject);
