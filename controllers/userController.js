@@ -100,18 +100,20 @@ const registerUser = [
         friends: [],
       });
 
+      // Save user and pass on to authentication step to automatically log the user in
       await newUser.save();
-      // Attach user ID to current session to ensure user can be identified on subsequent requests
-      req.session.userId = newUser._id;
-
-      res.status(200).json({
-        user: {
-          _id: newUser._id,
-          email: newUser.email,
-        }
-      });   // Return status OK and new post to client
+      next();
     }
   }),
+
+  // Passport auth system should authenticate the user automatically here
+  passport.authenticate("local"), (req, res) => {
+    res.status(200);
+    res.json({ user: {
+      _id: req.user._id,
+      email: req.user.email,
+    }})
+  }
 ];
 
 // @desc    Authenticate a user
@@ -131,36 +133,14 @@ const loginUser = [
     // Validation errors have occurred. Return these to the user
     if (!errors.isEmpty()) {
       res.status(400).json(errors.array());   // Do not throw single error here, pass and any all errors along
-    } else {
-      // Form data valid. Check for user in db and compare pw
-      // const user = await User.findOne({ email: req.body.email });
+    } 
 
-      // if (user && (await bcrypt.compare(req.body.password, user.password))) { 
-      //   // Attach user ID to current session to ensure user can be identified on subsequent requests
-      //   req.session.userId = user._id;
-
-      //   // User in db and passwords match. Return user to client
-      //   res.status(200).json({
-      //     user: {
-      //       _id: user._id,
-      //       email: user.email,
-      //     }
-      //   });  
-      // } else {  // user not found in db OR passwords do not match. Can split this logic for specific errors if needed
-      //   res.status(400);
-      //   throw new Error('Invalid credentials');
-      // }
-      // Authenticate with local strategy 
-      next();
-    }
+    next();
   }),
 
-  // Passport middleware
-  passport.authenticate("local"),
-  // Passport callback
-  function (req, res) {
+  // Call passport middleware to perform authentication process. This returns a user object on successful auth
+  passport.authenticate("local"), (req, res) => {
     res.status(200);
-
     res.json({ user: {
       _id: req.user._id,
       email: req.user.email,

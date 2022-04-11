@@ -9,7 +9,6 @@ const cors = require('cors');
 const { errorHandler } = require('./middleware/errorMiddleware');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
-const { addUserToRequestObject } = require('./middleware/userMiddleware');
 const passport = require('passport');
 
 // Allow requests from any frontend domain specifically. Credientials must be true to allow cookies
@@ -52,13 +51,6 @@ app.get('/auth/facebook/callback',
     // Successful authentication, redirect to frontend client URL.
     res.redirect(process.env.CLIENT_URL);
 });
-
-// app.use(addUserToRequestObject);
-
-// app.use((req, res, next) => {
-//   console.log(req.user, req.session);
-//   next();
-// })
 
 // Use routes
 app.use('/api/posts', postRoutes);
