@@ -37,7 +37,8 @@ app.use(session({
 }));
 
 // PASSPORT SETUP
-require('./config/passport');
+require('./config/passportFB');
+require('./config/passportLocal');
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -51,9 +52,6 @@ app.get('/auth/facebook/callback',
     // Successful authentication, redirect to frontend client URL.
     res.redirect(process.env.CLIENT_URL);
 });
-
-// Make available req.user on all requests when a user is currently logged in
-app.use(addUserToRequestObject);
 
 // Use routes
 app.use('/api/posts', postRoutes);

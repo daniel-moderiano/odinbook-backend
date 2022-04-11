@@ -7,6 +7,7 @@ const upload = require('../config/multer');
 const cloudinary = require('cloudinary').v2;
 const config = require('../config/cloudinary');
 const mongoose = require('mongoose');
+const passport = require('passport');
 
 // Note req.params.id of any kind is cast to ObjectID before a search query is run. Therefore, injection attacks do not have a foothold here (error will be thrown regardless).
 
@@ -131,26 +132,36 @@ const loginUser = [
     if (!errors.isEmpty()) {
       res.status(400).json(errors.array());   // Do not throw single error here, pass and any all errors along
     } else {
-      // Form data valid. Check for user in db and compare pw
-      const user = await User.findOne({ email: req.body.email });
+      // // Form data valid. Check for user in db and compare pw
+      // const user = await User.findOne({ email: req.body.email });
 
-      if (user && (await bcrypt.compare(req.body.password, user.password))) { 
-        // Attach user ID to current session to ensure user can be identified on subsequent requests
-        req.session.userId = user._id;
+      // if (user && (await bcrypt.compare(req.body.password, user.password))) { 
+      //   // Attach user ID to current session to ensure user can be identified on subsequent requests
+      //   req.session.userId = user._id;
 
-        // User in db and passwords match. Return user to client
-        res.status(200).json({
-          user: {
-            _id: user._id,
-            email: user.email,
-          }
-        });  
-      } else {  // user not found in db OR passwords do not match. Can split this logic for specific errors if needed
-        res.status(400);
-        throw new Error('Invalid credentials');
-      }
+      //   // User in db and passwords match. Return user to client
+      //   res.status(200).json({
+      //     user: {
+      //       _id: user._id,
+      //       email: user.email,
+      //     }
+      //   });  
+      // } else {  // user not found in db OR passwords do not match. Can split this logic for specific errors if needed
+      //   res.status(400);
+      //   throw new Error('Invalid credentials');
+      // }
+      // Authenticate with local strategy 
+      next();
     }
   }),
+
+  // Passport middleware
+  passport.authenticate("local"),
+  // Passport callback
+  function (req, res) {
+    res.status(200);
+    res.send('Logged in')
+  }
 ];
 
 // @desc    Logout a user (end session)
