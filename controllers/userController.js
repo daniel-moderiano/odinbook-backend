@@ -107,13 +107,14 @@ const registerUser = [
   }),
 
   // Passport auth system should authenticate the user automatically here
-  passport.authenticate("local"), (req, res) => {
-    res.status(200);
-    res.json({ user: {
-      _id: req.user._id,
-      email: req.user.email,
-    }})
-  }
+  passport.authenticate("local", { failWithError: true }), 
+    (req, res) => {
+      res.status(200);
+      res.json({ user: {
+        _id: req.user._id,
+        email: req.user.email,
+      }})
+    },
 ];
 
 // @desc    Authenticate a user
@@ -138,14 +139,16 @@ const loginUser = [
     next();
   }),
 
-  // Call passport middleware to perform authentication process. This returns a user object on successful auth
-  passport.authenticate("local"), (req, res) => {
-    res.status(200);
-    res.json({ user: {
-      _id: req.user._id,
-      email: req.user.email,
-    }})
-  }
+  // Call passport middleware to perform authentication process. This returns a user object on successful auth.
+  // Must include 'failWithError' to enable error to propagate to custom error handler
+  passport.authenticate("local", { failWithError: true }), 
+    (req, res) => {
+      res.status(200);
+      res.json({ user: {
+        _id: req.user._id,
+        email: req.user.email,
+      }})
+    },
 ];
 
 // @desc    Logout a user (end session)

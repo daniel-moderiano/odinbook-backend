@@ -10,7 +10,7 @@ const customFields = {
   usernameField: 'email',
 }
 
-const verifyCallback = asyncHandler(async (username, password, done) => {
+const verifyCallback = async (username, password, done) => {
   // Check for existing user in db, and if found, return only name and email
   const user = await User.findOne({ email: username });
 
@@ -28,7 +28,7 @@ const verifyCallback = asyncHandler(async (username, password, done) => {
       return done(null, false, { message: 'Invalid credentials' })
     }
   });
-});
+};
 
 const strategy = new LocalStrategy(customFields, verifyCallback);
 
