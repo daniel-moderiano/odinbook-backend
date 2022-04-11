@@ -39,12 +39,18 @@ const strategy = new FacebookStrategy(strategyOptions, verifyCallback);
 passport.use(strategy);
 
 // Required functions for the passport middleware. Customised slightly to use user._id rather than entire user object for better data safety/best pracice
-// passport.serializeUser(function(user, done) {
-//   done(null, user.id);
-// });
 
-// passport.deserializeUser(function(id, done) {
-//   User.findById(id, function(err, user) {
-//     done(err, user);
-//   });
-// });
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+// Only return basic user doc info
+passport.deserializeUser((id, done) => {
+  User.findById(id, {
+    'firstName': 1, 
+    'lastName': 1, 
+    'email': 1,  
+  }, (err, user) => {
+    done(err, user);
+  });
+});

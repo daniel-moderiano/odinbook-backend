@@ -53,6 +53,13 @@ app.get('/auth/facebook/callback',
     res.redirect(process.env.CLIENT_URL);
 });
 
+// app.use(addUserToRequestObject);
+
+// app.use((req, res, next) => {
+//   console.log(req.user, req.session);
+//   next();
+// })
+
 // Use routes
 app.use('/api/posts', postRoutes);
 app.use('/api/users', userRoutes);

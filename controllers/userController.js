@@ -132,7 +132,7 @@ const loginUser = [
     if (!errors.isEmpty()) {
       res.status(400).json(errors.array());   // Do not throw single error here, pass and any all errors along
     } else {
-      // // Form data valid. Check for user in db and compare pw
+      // Form data valid. Check for user in db and compare pw
       // const user = await User.findOne({ email: req.body.email });
 
       // if (user && (await bcrypt.compare(req.body.password, user.password))) { 
@@ -160,7 +160,11 @@ const loginUser = [
   // Passport callback
   function (req, res) {
     res.status(200);
-    res.send('Logged in')
+
+    res.json({ user: {
+      _id: req.user._id,
+      email: req.user.email,
+    }})
   }
 ];
 
@@ -174,7 +178,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   }
 
   // Session exists. Regardless of whether userId is present or not it should be destroyed
-  req.session.destroy();
+  // req.session.destroy();
   req.logout();
   res.status(200).json({  // Return status OK and logout message
     message: 'Log out successful'
@@ -318,7 +322,7 @@ const getUserPosts = asyncHandler(async (req, res) => {
 // @access  Private
 const getUserFeed = asyncHandler(async (req, res) => {
   // Use the virtual 'posts' for each user in the friends list. This will create a combined list of all friends' posts
-    // Retrieve single user by user ID, retrieving only friends list (but full populated data)
+  // Retrieve single user by user ID, retrieving only friends list (but full populated data)
   const user = await User.findById(req.params.userId, 'friends')
     .populate({
       path: 'posts',
@@ -347,12 +351,14 @@ const getUserFeed = asyncHandler(async (req, res) => {
 
   // Convert user doc to JS object to reveal virtuals (not revealed until doc is cast into Object or JSON)
   const userObj = user.toObject();
+  // console.log(userObj.friends);
 
   // Extract array of user's own posts to later include in the feed
   const userPosts = userObj.posts;
 
   // Multi-step array operation: create new array with each friend mapped to their own array of posts, then flatten this new array to remove nesting and empty arrays (friends that had no posts map to empty arrays). The result is a single-depth array of posts only, representing all posts from a user's friends
   const friendPosts = (userObj.friends.map((friend) => (friend.user.posts))).flat();
+  
 
   // Combine friend posts with user's posts for the overall feed (unsorted)
   const postFeed = userPosts.concat(friendPosts);
