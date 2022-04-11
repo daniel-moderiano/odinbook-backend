@@ -113,12 +113,9 @@ const registerUser = [
       res.json({ user: {
         _id: req.user._id,
         email: req.user.email,
-<<<<<<< HEAD
         firstName: req.user.firstName,
         lastName: req.user.lastName,
         profilePic: req.user.profilePic,
-=======
->>>>>>> 67547772a3958efb01d1417d1dd4b6869dab21f1
       }})
     },
 ];
@@ -153,12 +150,9 @@ const loginUser = [
       res.json({ user: {
         _id: req.user._id,
         email: req.user.email,
-<<<<<<< HEAD
         firstName: req.user.firstName,
         lastName: req.user.lastName,
         profilePic: req.user.profilePic,
-=======
->>>>>>> 67547772a3958efb01d1417d1dd4b6869dab21f1
       }})
     },
 ];
@@ -351,10 +345,13 @@ const getUserFeed = asyncHandler(async (req, res) => {
   // Extract array of user's own posts to later include in the feed
   const userPosts = userObj.posts;
 
-  // Multi-step array operation: create new array with each friend mapped to their own array of posts, then flatten this new array to remove nesting and empty arrays (friends that had no posts map to empty arrays). The result is a single-depth array of posts only, representing all posts from a user's friends
-  const friendPosts = (userObj.friends.map((friend) => (friend.user.posts))).flat();
-  
+  // Create new array with users confirmed friends
+  const userFriends = userObj.friends.filter((friend) => friend.status === 'friend');
+  console.log(userFriends);
 
+  // Multi-step array operation: create new array with each friend mapped to their own array of posts, then flatten this new array to remove nesting and empty arrays (friends that had no posts map to empty arrays). The result is a single-depth array of posts only, representing all posts from a user's friends
+  const friendPosts = (userFriends.map((friend) => friend.user.posts)).flat();
+  
   // Combine friend posts with user's posts for the overall feed (unsorted)
   const postFeed = userPosts.concat(friendPosts);
 
