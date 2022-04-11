@@ -50,6 +50,7 @@ passport.deserializeUser((id, done) => {
     'firstName': 1, 
     'lastName': 1, 
     'email': 1,  
+    'profilePic': 1
   }, (err, user) => {
     done(err, user);
   });
