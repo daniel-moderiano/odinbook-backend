@@ -113,9 +113,12 @@ const registerUser = [
       res.json({ user: {
         _id: req.user._id,
         email: req.user.email,
+<<<<<<< HEAD
         firstName: req.user.firstName,
         lastName: req.user.lastName,
         profilePic: req.user.profilePic,
+=======
+>>>>>>> 67547772a3958efb01d1417d1dd4b6869dab21f1
       }})
     },
 ];
@@ -150,9 +153,12 @@ const loginUser = [
       res.json({ user: {
         _id: req.user._id,
         email: req.user.email,
+<<<<<<< HEAD
         firstName: req.user.firstName,
         lastName: req.user.lastName,
         profilePic: req.user.profilePic,
+=======
+>>>>>>> 67547772a3958efb01d1417d1dd4b6869dab21f1
       }})
     },
 ];
