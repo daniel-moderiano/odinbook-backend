@@ -36,32 +36,21 @@ app.use(session({
   saveUninitialized: true,
 }));
 
-
-
-// PASSPORT 
+// PASSPORT SETUP
 require('./config/passport');
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Perform authentication when the user hits this route
-// Must scope email as this requires additional permissions from the user
+// Initial FB auth occurs at this route. The FB auth page will be rendered. Must add email to scope as this requires additional permissions from the user
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 
-// Present a message when the user successfully authenticates with FB
+// User hits this route upon successful FB authentication at above route.
 app.get('/auth/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: '/' }),
+  passport.authenticate('facebook'),
   function(req, res) {
-    console.log(req.session, req.user);
     // Successful authentication, redirect to frontend client URL.
-    res.redirect('http://localhost:3006');
-  });
-
-// This is a local app logout; it does not log the user out of facebook itself
-app.get('/logout', (req, res) => {
-  req.session = null;
-  req.logout();
-  res.redirect('/');
-})
+    res.redirect(process.env.CLIENT_URL);
+});
 
 // Make available req.user on all requests when a user is currently logged in
 app.use(addUserToRequestObject);

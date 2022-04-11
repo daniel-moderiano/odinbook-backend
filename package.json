@@ -14,7 +14,8 @@
   "scripts": {
     "test": "jest --runInBand --watchAll --verbose",
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "debug": "DEBUG=express:* nodemon server.js"
   },
   "author": "Daniel Moderiano",
   "license": "MIT",

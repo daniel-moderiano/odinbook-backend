@@ -164,6 +164,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 
   // Session exists. Regardless of whether userId is present or not it should be destroyed
   req.session.destroy();
+  req.logout();
   res.status(200).json({  // Return status OK and logout message
     message: 'Log out successful'
   });   

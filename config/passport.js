@@ -38,7 +38,7 @@ const strategy = new FacebookStrategy(strategyOptions, verifyCallback);
 
 passport.use(strategy);
 
-// Required functions for the passport middleware. No customaisation required
+// Required functions for the passport middleware. Customised slightly to use user._id rather than entire user object for better data safety/best pracice
 passport.serializeUser(function(user, done) {
   done(null, user.id);
 });
