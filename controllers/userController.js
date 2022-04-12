@@ -302,8 +302,14 @@ const deleteUser = asyncHandler(async (req, res) => {
 const getUserPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find({ 'user': req.params.userId })
   .populate('user', 'firstName lastName profilePic')
-  .populate('comments')
-  res.status(200).json(posts)
+  .populate('comments');
+
+  // Sort the feed by date posted using native JS date comparisons
+  const sortedPosts = posts.sort((a, b) => {
+    return (a.createdAt < b.createdAt) ? 1 : ((a.createdAt > b.createdAt) ? -1 : 0);
+  });
+
+  res.status(200).json(sortedPosts)
 });
 
 // @desc    Get all posts making up a user's feed, sorted by date recency (consider limiting to past X months only)
@@ -340,14 +346,12 @@ const getUserFeed = asyncHandler(async (req, res) => {
 
   // Convert user doc to JS object to reveal virtuals (not revealed until doc is cast into Object or JSON)
   const userObj = user.toObject();
-  // console.log(userObj.friends);
 
   // Extract array of user's own posts to later include in the feed
   const userPosts = userObj.posts;
 
   // Create new array with users confirmed friends
   const userFriends = userObj.friends.filter((friend) => friend.status === 'friend');
-  console.log(userFriends);
 
   // Multi-step array operation: create new array with each friend mapped to their own array of posts, then flatten this new array to remove nesting and empty arrays (friends that had no posts map to empty arrays). The result is a single-depth array of posts only, representing all posts from a user's friends
   const friendPosts = (userFriends.map((friend) => friend.user.posts)).flat();
