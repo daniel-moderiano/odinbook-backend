@@ -120,6 +120,32 @@ const registerUser = [
     },
 ];
 
+// @desc    Authenticate a test user
+// @route   POST /api/users/login/test
+// @access  Public
+const loginTestUser = [
+  // Manually set req.body parameters here
+  asyncHandler(async (req, res, next) => {
+    req.body.email = 'tobey@gmail.com',
+    req.body.password = 'peterparker',
+
+    next();
+  }),
+
+  // Call passport middleware to perform authentication process on above data
+  passport.authenticate("local", { failWithError: true }), 
+    (req, res) => {
+      res.status(200);
+      res.json({ user: {
+        _id: req.user._id,
+        email: req.user.email,
+        firstName: req.user.firstName,
+        lastName: req.user.lastName,
+        profilePic: req.user.profilePic,
+      }})
+    },
+];
+
 // @desc    Authenticate a user
 // @route   POST /api/users/login
 // @access  Public
@@ -398,6 +424,7 @@ const getUserFriends = asyncHandler(async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
+  loginTestUser,
   getUser,
   getUsers,
   deleteUser,

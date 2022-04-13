@@ -133,7 +133,7 @@ const handleFriendRequest = asyncHandler(async (req, res) => {
       } else {
         // Request cannot be accepted (none available)
         res.status(400);
-        throw new Error('Request does not exist');
+        throw new Error('Request no longer exists');
       }
 
     case 'deleteRequest':   // user is deleting a friend request from another user
@@ -144,7 +144,7 @@ const handleFriendRequest = asyncHandler(async (req, res) => {
       } else {
         // Request cannot be accepted (none available)
         res.status(400);
-        throw new Error('Request does not exist');
+        throw new Error('Request no longer exists');
       }
 
     case 'cancelRequest':   // user is cancelling a friend request to another user
@@ -155,7 +155,7 @@ const handleFriendRequest = asyncHandler(async (req, res) => {
       } else {
         // Request cannot be accepted (none available)
         res.status(400);
-        throw new Error('Request does not exist');
+        throw new Error('Request no longer exists');
       }
 
     case 'unfriendRequest':   // user is unfriending an existing friend
