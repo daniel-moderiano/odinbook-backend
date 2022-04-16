@@ -216,7 +216,6 @@ const updateUser = [
 
   // Process request after input data has been validated
   asyncHandler(async (req, res, next) => {
-    console.log(req.body);
     // Extract the validation errors from a request
     const errors = validationResult(req);
 
