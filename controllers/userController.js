@@ -320,7 +320,6 @@ const deleteUser = asyncHandler(async (req, res) => {
   }); // Might consider returning the deleted user itself here?
 });
 
-
 // @desc    Get all posts by a single user
 // @route   GET /api/user/:userId/posts
 // @access  Private
@@ -418,7 +417,6 @@ const getUserFriends = asyncHandler(async (req, res) => {
 
   res.status(200).json(sortedFriends)
 });
-
 
 module.exports = {
   registerUser,

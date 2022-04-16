@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const { DateTime } = require('luxon');
 
-// Schema for user. Requires  
 const userSchema = new Schema(
   {
     firstName: { type: String, required: true },
@@ -30,6 +29,7 @@ const userSchema = new Schema(
       imageUrl: String,
     },
     facebookId: String,   // set to the profileID provided by facebook when the user authenticates via FB. Used for FB account lookup
+    deleted: { type: Boolean, default: false },   // indicates a deleted account
   },
   
   {
@@ -37,7 +37,6 @@ const userSchema = new Schema(
     toJSON: { virtuals: true },   // Ensures res.json() provides the virtuals when this model is populated
     toObject: { virtuals: true },
   },
-
 );
 
 // Virtual for user's full name

@@ -86,7 +86,7 @@ const addComment = [
   }),
 ];
 
-// @desc    Update single post
+// @desc    Update single comment
 // @route   PUT /api/posts/:postId/comments/:commentId
 // @access  Private
 const updateComment = [
@@ -122,7 +122,7 @@ const updateComment = [
   }),
 ];
 
-// @desc    Like a single post (i.e. add new user to likes array)
+// @desc    Like a single comment (i.e. add new user to likes array)
 // @route   PUT /api/posts/:postId/comments/:commentId/likes
 // @access  Private
 const likeComment = asyncHandler(async (req, res) => {
@@ -148,7 +148,7 @@ const likeComment = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Delete single post
+// @desc    Delete single comment
 // @route   DELETE /api/posts/:postId/comments/:commentId
 // @access  Private
 const deleteComment = asyncHandler(async (req, res) => {

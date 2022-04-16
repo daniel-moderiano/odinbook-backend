@@ -10,6 +10,7 @@ const { errorHandler } = require('./middleware/errorMiddleware');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const passport = require('passport');
+const { practiceQuery } = require('./controllers/accountController');
 
 // Allow requests from any frontend domain specifically. Credientials must be true to allow cookies
 app.use(cors({
@@ -56,6 +57,7 @@ app.get('/auth/facebook/callback',
 app.use('/api/posts', postRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/friends', friendRoutes);
+app.get('/api/:userId/practice', practiceQuery);
 
 // Use error handler AFTER all routes are defined above
 app.use(errorHandler);
