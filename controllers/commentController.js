@@ -159,8 +159,16 @@ const deleteComment = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('Comment not found');
   }
+
   // No errors, remove comment from db
   await comment.remove();
+
+  // Also remove the reference to this comment in the corresponding post
+  await Post.updateOne(
+    { 'comments': req.params.commentId },   // find the post this comment exists on
+    { $pull: { 'comments': req.params.commentId } }   // remove the comment from the comments array
+  )
+
   res.status(200).json({ id: req.params.commentId });  // Consider also returning the deleted comment
 });
 

@@ -25,11 +25,20 @@ const deleteAccount = asyncHandler(async (req, res) => {
   // Obtain all comments by this user
   const comments = await Comment.find({ 'user': req.params.userId })
 
+  // Remove all comments by this user
+
+  // Remove all reference to comments by this user on posts
+
   // Obtain all posts by this user
   const userPosts = await Post.find({ 'user': req.params.userId })
 
-  // Obtain all posts that the user has liked
-  const likedPosts = await Post.find({ 'likes': req.params.userId })
+  // Remove all likes this user has submitted for all posts
+  await Post.updateMany(
+    { 'likes': req.params.userId },   // find all posts the user has liked
+    { $pull: { 'likes': req.params.userId } }   // remove the likes from the likes array
+  )
+
+  // Remove all likes this user has submitted for all comments
 
   await user.remove();
 
@@ -43,16 +52,32 @@ const deleteAccount = asyncHandler(async (req, res) => {
 });
 
 const practiceQuery = asyncHandler(async (req, res) => {
-  // Obtain all posts that the user has liked
-  const likedPosts = await Post.find({ 'likes': req.params.userId })
+  // const comments = await Comment.find({ 'user': req.params.userId });
 
-  // const updatedPosts = await Post.updateMany(
-  //   { 'likes': req.params.userId },
-  //   { $pull: { 'likes': req.params.userId } }
+  // const deleted = await Comment.deleteMany({ 'user': req.params.userId })
+
+  // const deleted = await Post.find({ 'comments.user': req.params.userId })
+
+  // const deleted = await Post.updateMany(
+  //   { 'comments.user': req.params.userId },   // find all posts the user has liked
+  //   { $pull: { 'likes': req.params.userId } }   // remove the likes from the likes array
   // )
 
-  // res.status(200).json(updatedPosts)
-  res.status(200).json(likedPosts)
+  const deleted = await Comment.findByIdAndDelete(req.params.userId)
+
+  // Also remove the reference to this comment in the corresponding post
+  // await Post.updateOne(
+  //   { 'comments': req.params.userId },   // find all posts the user has liked
+  //   { $pull: { 'comments': req.params.userId } }   // remove the likes from the likes array
+  // )
+
+  // const deleted = await Post.updateOne(
+  //   { 'comments': req.params.userId },   // find all posts the user has liked
+  //   { $pull: { 'comments': req.params.userId } }   // remove the likes from the likes array
+  // )
+
+
+  res.status(200).json(deleted)
 });
 
 module.exports = {
