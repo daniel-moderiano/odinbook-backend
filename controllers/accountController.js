@@ -52,32 +52,25 @@ const deleteAccount = asyncHandler(async (req, res) => {
 });
 
 const practiceQuery = asyncHandler(async (req, res) => {
-  // const comments = await Comment.find({ 'user': req.params.userId });
+  const comments = await Comment.find({ 'user': req.params.userId });
 
-  // const deleted = await Comment.deleteMany({ 'user': req.params.userId })
+  // Isolate the comment IDs (can't do this with a projection otherwise the virtuals cannot be 'got' with the getter and an error is thrown - since virtuals are set to true in the Comment Model)
+  const commentIds = comments.map((comment) => comment._id);
 
-  // const deleted = await Post.find({ 'comments.user': req.params.userId })
+  await Comment.deleteMany({ 'user': req.params.userId })
 
-  // const deleted = await Post.updateMany(
-  //   { 'comments.user': req.params.userId },   // find all posts the user has liked
-  //   { $pull: { 'likes': req.params.userId } }   // remove the likes from the likes array
-  // )
+  // Find all posts that contain any of the comments by this user
+  const posts = await Post.find(
+    { 'comments': { $in: commentIds } },   // find all posts the user has commented on
+  )
 
-  const deleted = await Comment.findByIdAndDelete(req.params.userId)
+  // Remove the reference to this comment in the corresponding post
+  const removed = await Post.updateMany(
+    { 'comments': { $in: commentIds } },   // find all posts the user has commented on
+    { $pull: { 'comments': { $in: commentIds } } }   // remove the comment from the comments array
+  )
 
-  // Also remove the reference to this comment in the corresponding post
-  // await Post.updateOne(
-  //   { 'comments': req.params.userId },   // find all posts the user has liked
-  //   { $pull: { 'comments': req.params.userId } }   // remove the likes from the likes array
-  // )
-
-  // const deleted = await Post.updateOne(
-  //   { 'comments': req.params.userId },   // find all posts the user has liked
-  //   { $pull: { 'comments': req.params.userId } }   // remove the likes from the likes array
-  // )
-
-
-  res.status(200).json(deleted)
+  res.status(200).json(removed)
 });
 
 module.exports = {
