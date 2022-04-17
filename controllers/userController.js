@@ -193,9 +193,9 @@ const logoutUser = asyncHandler(async (req, res) => {
     throw new Error('Unable to log out')
   }
 
-  // Session exists. Regardless of whether userId is present or not it should be destroyed
-  // req.session.destroy();
+  // Session exists, log the user out
   req.logout();
+
   res.status(200).json({  // Return status OK and logout message
     message: 'Log out successful'
   });   
@@ -280,7 +280,7 @@ const updateUserPic = [
       // Booleans cannot be set in form data object, so check for string version of boolean
       if (req.body.imageUpdated === 'true') {
         // Delete old image
-        cloudinary.uploader.destroy(user.profilePic.imageId, (err, res) => {
+        cloudinary.uploader.destroy(user.profilePic.imageId, (err, result) => {
           if (err) {    // error occurred with deletion, however safe to continue db user update
             console.log(err);
           }
@@ -315,7 +315,7 @@ const deleteUser = asyncHandler(async (req, res) => {
   }
   // Remove image from cloudinary if image exists
   if (user.profilePic) {
-    cloudinary.uploader.destroy(user.profilePic.imageId, (err, res) => {
+    cloudinary.uploader.destroy(user.profilePic.imageId, (err, result) => {
       if (err) {    // error occurred with deletion, however safe to continue db user deletion
         console.log(err);
       }
@@ -331,7 +331,7 @@ const deleteUser = asyncHandler(async (req, res) => {
 });
 
 // @desc    Delete entire user account, including all traces of the user across the DB
-// @route   DELETE /api/user/:userId
+// @route   DELETE /api/user/:userId/account
 // @access  Private
 const deleteUserAccount = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.userId);
@@ -347,7 +347,17 @@ const deleteUserAccount = asyncHandler(async (req, res) => {
   await removeAllComments(req.params.userId);
   await removeAllFriends(req.params.userId);
   await removeUser(req.params.userId);
+
+  // Log the user out
+  if (!req.session) {   // session does not exists, user has already logged out/is not logged in
+    res.status(400);
+    throw new Error('Unable to log out');
+  }
+
+  // Session exists, log the user out
+  req.logout();
   
+  // All operations successfull
   res.status(200).json({
     user: { 
       id: req.params.userId 

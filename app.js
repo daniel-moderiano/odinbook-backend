@@ -57,7 +57,6 @@ app.get('/auth/facebook/callback',
 app.use('/api/posts', postRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/friends', friendRoutes);
-app.get('/api/:userId/practice', practiceQuery);
 
 // Use error handler AFTER all routes are defined above
 app.use(errorHandler);

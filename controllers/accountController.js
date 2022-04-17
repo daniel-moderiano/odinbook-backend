@@ -41,16 +41,16 @@ const removeAllPosts = async(userId) => {
   const imageIds = postsWithImages.map((post) => post.image.imageId);
 
   // Remove bulk resources from Cloudinary (max 100 images)
-  cloudinary.api.delete_resources(imageIds, (err, res) => {
-    if (err) {
-      console.log(err);
-    }
-  });
+  if (imageIds.length > 0) {    // post images exist
+    cloudinary.api.delete_resources(imageIds, (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+    });
+  }
 
   // Finally, remove all posts by this user
   const removed = await Post.deleteMany({ 'user': userId });
-
-  res.status(200).json(removed);
 }
 
 // Removes all comment documents made by the user, and any references to these comments amongst all posts
@@ -83,21 +83,12 @@ const removeAllFriends = async(userId) => {
 const removeUser = async(userId) => {
   const user = await User.findById(userId);
 
-  if (!user) {  // User not found in db
-    res.status(400);
-    throw new Error('User not found');
-  }
   // Remove image from cloudinary if image exists
   if (user.profilePic) {
     cloudinary.uploader.destroy(user.profilePic.imageId);
   }
   // User found with no errors; remove from db
   await user.remove();
-  res.status(200).json({
-    user: { 
-      id: userId 
-    }
-  });
 }
 
 module.exports = {
