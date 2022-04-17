@@ -29,7 +29,6 @@ const userSchema = new Schema(
       imageUrl: String,
     },
     facebookId: String,   // set to the profileID provided by facebook when the user authenticates via FB. Used for FB account lookup
-    deleted: { type: Boolean, default: false },   // indicates a deleted account
   },
   
   {

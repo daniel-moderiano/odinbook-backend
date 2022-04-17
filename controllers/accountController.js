@@ -53,12 +53,11 @@ const removeAllPosts = async(userId) => {
   Post.deleteMany({ 'user': req.params.userID });
 }
 
-// TODO
 const removeAllFriends = async(userId) => {
-  const user = await User.findById(req.params.userId);
-  // TODO: All outgoing requests should be cancelled. All incoming requests should be deleted/denied. All confirmed friends should be removed on both ends. 
-  const friends = user.friends;
-
+  await User.updateMany(
+    { 'friends.user': req.params.userId },    // find all users with this user as a friend of some type
+    { $pull: { 'friends': { 'user': req.params.userId } } }   // remove all friend entries for this user
+  )
 };
 
 // Remove the user document. This should be the very last operation.
@@ -84,15 +83,11 @@ const removeUser = async(userId) => {
 
 
 const practiceQuery = asyncHandler(async (req, res) => {
-  // Remove all likes this user has submitted for all comments
-  const removed = await Comment.updateMany(
-    { 'likes': req.params.userId },   // find all comments the user has liked
-    { $pull: { 'likes': req.params.userId } }   // remove the likes from the likes array
-  )
+
+
   res.status(200).json(removed)
 });
 
 module.exports = {
-  deleteAccount,
   practiceQuery
 }
