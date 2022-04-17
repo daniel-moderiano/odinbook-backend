@@ -278,7 +278,12 @@ const updateUserPic = [
       // A new image property should be created if a new image exists, otherwise a blank property is used to overwrite the existing image data
       // Booleans cannot be set in form data object, so check for string version of boolean
       if (req.body.imageUpdated === 'true') {
-        // cloudinary.uploader.destroy(post.image.imageId);
+        // Delete old image
+        cloudinary.uploader.destroy(user.profilePic.imageId, (err, res) => {
+          if (err) {    // error occurred with deletion, however safe to continue db user update
+            console.log(err);
+          }
+        });
         if (req.file) {
           user.profilePic = {
             imageId: req.file.filename,
@@ -309,7 +314,11 @@ const deleteUser = asyncHandler(async (req, res) => {
   }
   // Remove image from cloudinary if image exists
   if (user.profilePic) {
-    cloudinary.uploader.destroy(user.profilePic.imageId);
+    cloudinary.uploader.destroy(user.profilePic.imageId, (err, res) => {
+      if (err) {    // error occurred with deletion, however safe to continue db user deletion
+        console.log(err);
+      }
+    });
   }
   // User found with no errors; remove from db
   await user.remove();

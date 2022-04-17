@@ -32,18 +32,23 @@ const removeAllPosts = async(userId) => {
   // Find all posts by this user
   const posts = await Post.find({ 'user': req.params.userId });
 
-  if (posts.length > 0) {   // user has posts
-    // Extract the comment IDs attached to the user's posts
-    const commentIds = posts.map((post) => post.comments).flat()
+  // Isolate those posts with images
+  const postsWithImages = posts.filter((post) => post.image.imageId !== undefined);
 
-    // Find and remove all comments attached to the user's posts
-    await Comment.deleteMany({ '_id': { $in: commentIds } });
-  }
+  // Isolate image IDs of these post images
+  const imageIds = postsWithImages.map((post) => post.image.imageId);
 
-  // TODO: remove all images attached to posts
+  // Remove bulk resources from Cloudinary (max 100 images)
+  cloudinary.api.delete_resources(imageIds, (err, res) => {
+    if (err) {
+      console.log(err);
+    }
+  });
 
   // Finally, remove all posts by this user
-  await Post.deleteMany({ 'user': req.params.userId });
+  const removed = await Post.deleteMany({ 'user': req.params.userId });
+
+  res.status(200).json(removed);
 }
 
 // Removes all comment documents made by the user, and any references to these comments amongst all posts
@@ -97,8 +102,6 @@ const removeUser = async(userId) => {
 
 const practiceQuery = asyncHandler(async (req, res) => {
 
-
-  res.status(200).json(comments)
 });
 
 module.exports = {

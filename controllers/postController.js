@@ -132,7 +132,11 @@ const updatePost = [
       // A new image property should be created if a new image exists, otherwise a blank property is used to overwrite the existing image data
       // Booleans cannot be set in form data object, so check for string version of boolean
       if (req.body.imageUpdated === 'true') {
-        cloudinary.uploader.destroy(post.image.imageId);
+        cloudinary.uploader.destroy(post.image.imageId, (err, res) => {
+          if (err) {    // error with delete operation, however save to continue with update operation
+            console.log(err);
+          }
+        });
         if (req.file) {
           post.image = {
             imageId: req.file.filename,
@@ -189,7 +193,11 @@ const deletePost = asyncHandler(async (req, res) => {
   }
   // Remove image from cloudinary if image exists
   if (post.image) {
-    cloudinary.uploader.destroy(post.image.imageId);
+    cloudinary.uploader.destroy(post.image.imageId, (err, res) => {
+      if (err) {    // error occurred with delete operation. Log error but continue with post deletion
+        console.log(err);
+      }
+    });
   }
   // Post found with no errors; remove from db
   await post.remove();
