@@ -8,7 +8,8 @@ const cloudinary = require('cloudinary').v2;
 const config = require('../config/cloudinary');
 const mongoose = require('mongoose');
 const passport = require('passport');
-
+const { removeAllLikes, removeAllPosts, removeAllComments, removeAllFriends, removeUser } = require('./accountController');
+  
 // Note req.params.id of any kind is cast to ObjectID before a search query is run. Therefore, injection attacks do not have a foothold here (error will be thrown regardless).
 
 // @desc    Get a user (public details)
@@ -329,6 +330,31 @@ const deleteUser = asyncHandler(async (req, res) => {
   }); // Might consider returning the deleted user itself here?
 });
 
+// @desc    Delete entire user account, including all traces of the user across the DB
+// @route   DELETE /api/user/:userId
+// @access  Private
+const deleteUserAccount = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.userId);
+
+  if (!user) {  // User not found in db
+    res.status(400);
+    throw new Error('User not found');
+  }
+
+  // User found, continue with deletion operations
+  await removeAllLikes(req.params.userId);
+  await removeAllPosts(req.params.userId);
+  await removeAllComments(req.params.userId);
+  await removeAllFriends(req.params.userId);
+  await removeUser(req.params.userId);
+  
+  res.status(200).json({
+    user: { 
+      id: req.params.userId 
+    }
+  });
+});
+
 // @desc    Get all posts by a single user
 // @route   GET /api/user/:userId/posts
 // @access  Private
@@ -440,5 +466,6 @@ module.exports = {
   getCurrentUser,
   getUserPosts,
   getUserFeed,
-  getUserFriends
+  getUserFriends,
+  deleteUserAccount
 }
