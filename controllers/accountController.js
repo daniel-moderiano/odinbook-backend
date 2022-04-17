@@ -45,37 +45,43 @@ const removeAllComments = async (userId) => {
   )
 }
 
-// @desc    Delete an entire user account
-// @route   DELETE /api/users/:userId/account
-// @access  Private
-const deleteAccount = asyncHandler(async (req, res) => {
-  // Obtain the user's details for User doc deletion. Note the user's _id will be key to identifying their presence across the entire db for complete removal
-  const user = await User.findById(req.params.userId);
+// TODO
+const removeAllPosts = async(userId) => {
+  // TODO: remove all comments attached to removed posts
+  // TODO: remove all images attached to posts
+  // Remove all posts by this user
+  Post.deleteMany({ 'user': req.params.userID });
+}
 
+// TODO
+const removeAllFriends = async(userId) => {
+  const user = await User.findById(req.params.userId);
   // TODO: All outgoing requests should be cancelled. All incoming requests should be deleted/denied. All confirmed friends should be removed on both ends. 
   const friends = user.friends;
 
+};
 
-  // Obtain all posts by this user
-  const userPosts = await Post.find({ 'user': req.params.userId })
+// Remove the user document. This should be the very last operation.
+const removeUser = async(userId) => {
+  const user = await User.findById(req.params.userId);
 
-  // Remove all posts by this user
-  Post.deleteMany({ 'user': req.params.userID })
-
-  // TODO: remove all comments attached to removed posts
-
-
-  // Remove the user
-  await user.remove();
-
-  if (!user) {  // user not found in db, above query returns null
+  if (!user) {  // User not found in db
     res.status(400);
     throw new Error('User not found');
   }
+  // Remove image from cloudinary if image exists
+  if (user.profilePic) {
+    cloudinary.uploader.destroy(user.profilePic.imageId);
+  }
+  // User found with no errors; remove from db
+  await user.remove();
   res.status(200).json({
-    user: user
-  })
-});
+    user: { 
+      id: req.params.userId 
+    }
+  });
+}
+
 
 const practiceQuery = asyncHandler(async (req, res) => {
   // Remove all likes this user has submitted for all comments
