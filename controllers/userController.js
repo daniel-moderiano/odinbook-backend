@@ -23,6 +23,7 @@ const getUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('User not found');
   }
+
   res.status(200).json({
     user: user
   })
@@ -49,6 +50,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('User not found');
   }
+
   res.status(200).json({
     user: user
   });
@@ -339,6 +341,12 @@ const deleteUserAccount = asyncHandler(async (req, res) => {
   if (!user) {  // User not found in db
     res.status(400);
     throw new Error('User not found');
+  }
+
+  // If the user is operating a test account, deletion cannot be performed
+  if (req.params.userId === '6253eafa7c5f03b0906cc7b5') {   
+    res.status(400);
+    throw new Error('Cannot delete test account');
   }
 
   // User found, continue with deletion operations
