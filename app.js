@@ -10,6 +10,11 @@ const { errorHandler } = require('./middleware/errorMiddleware');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const passport = require('passport');
+const compression = require('compression');
+const helmet = require('helmet');
+
+// Set basic security HTTP headers. Initial testing suggests the CSP does not block any key app features
+app.use(helmet());
 
 // Allow requests from any frontend domain specifically. Credientials must be true to allow cookies
 app.use(cors({
@@ -40,6 +45,9 @@ require('./config/passportFB');
 require('./config/passportLocal');
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Compress all routes
+app.use(compression())
 
 // Initial FB auth occurs at this route. The FB auth page will be rendered. Must add email to scope as this requires additional permissions from the user
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
