@@ -10,7 +10,7 @@ const strategyOptions = {
   clientSecret: process.env['FACEBOOK_APP_SECRET'],
   // When the user is successfully authenticated via the FB login, they will be redirected to this IRL
   callbackURL: "http://localhost:3000/auth/facebook/callback",
-  profileFields: ['id', 'name', 'email']
+  profileFields: ['id', 'name', 'email', 'picture.type(large)']
 }
 
 const verifyCallback = asyncHandler(async (accessToken, refreshToken, profile, done) => {
@@ -25,6 +25,9 @@ const verifyCallback = asyncHandler(async (accessToken, refreshToken, profile, d
       firstName: profile.name.givenName,
       lastName: profile.name.familyName,
       email: profile.emails[0].value,
+      profilePic: {   // only able to get imageURL, no altText available
+        imageUrl: profile.photos[0].value,
+      },
       friends: [],
     });
 
