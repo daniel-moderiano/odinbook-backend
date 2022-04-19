@@ -146,10 +146,15 @@ const updatePost = [
             console.log(err);
           }
         });
-        if (req.file) {
+        if (req.file) {   // new image added
+        // Generate alt text for the new image, and overrride any existing alt text
+          let altText = '';
+          altText = await generateAltText(req.file.path);
+
           post.image = {
             imageId: req.file.filename,
             imageUrl: req.file.path,
+            altText,
           }
         } else {
           post.image = undefined;

@@ -287,10 +287,15 @@ const updateUserPic = [
             console.log(err);
           }
         });
-        if (req.file) {
+        if (req.file) {   // new image added 
+          // Generate alt text for the new image, and override any previous altText in User doc
+          let altText = '';
+          altText = await generateAltText(req.file.path);
+
           user.profilePic = {
             imageId: req.file.filename,
             imageUrl: req.file.path,
+            altText,
           }
         } else {
           user.profilePic = undefined;
