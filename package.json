@@ -11,6 +11,9 @@
     "forceExit": true,
     "testEnvironment": "node"
   },
+  "engines": {
+    "node": "16.14.0"
+  },
   "scripts": {
     "test": "jest --runInBand --watchAll --verbose",
     "start": "node server.js",
