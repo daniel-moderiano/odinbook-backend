@@ -27,6 +27,7 @@ const userSchema = new Schema(
     profilePic: { 
       imageId: String,
       imageUrl: String,
+      altText: String,
     },
     facebookId: String,   // set to the profileID provided by facebook when the user authenticates via FB. Used for FB account lookup
   },
@@ -45,7 +46,7 @@ userSchema
     return `${this.firstName} ${this.lastName}`;
   })
 
-  // Virtual to populate all the posts by the user 
+// Virtual to populate all the posts by the user 
 userSchema.virtual('posts', {
   ref: 'Post',
   localField: '_id',

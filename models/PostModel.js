@@ -20,6 +20,7 @@ const postSchema = new Schema(
     image: { 
       imageId: String,
       imageUrl: String,
+      altText: String,
     }
   },
   {

@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const upload = require('../config/multer');
 const cloudinary = require('cloudinary').v2;
 const config = require('../config/cloudinary');
+const generateAltText = require('../utils/altTextGenerator');
 // Note req.params.id of any kind is cast to ObjectID before a search query is run. Therefore, injection attacks do not have a foothold here (error will be thrown regardless).
 
 // @desc    Get all posts
@@ -69,6 +70,13 @@ const addPost = [
     // Extract the validation errors from a request
     const errors = validationResult(req);
 
+    // Generate alt text for an image (if an image exists)
+    let altText = '';
+
+    if (req.file) {   // image exists
+      altText = await generateAltText(req.file.path);
+    }
+
     // Create new post
     const newPost = new Post({
       user: req.user._id, // req.user is created by the auth middleware when accessing any protected route
@@ -78,6 +86,7 @@ const addPost = [
       image: req.file && {
         imageId: req.file.filename,
         imageUrl: req.file.path,
+        altText,
       }
     });
 
