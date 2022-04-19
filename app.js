@@ -4,7 +4,7 @@ const express = require('express');
 const postRoutes = require('./routes/postRoutes');
 const userRoutes = require('./routes/userRoutes');
 const friendRoutes = require('./routes/friendRoutes');
-// const cors = require('cors')
+const cors = require('cors')
 const { errorHandler } = require('./middleware/errorMiddleware');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
@@ -17,10 +17,10 @@ const app = express();
 app.use(helmet());
 
 // Allow requests from any frontend domain specifically. Credientials must be true to allow cookies
-// app.use(cors({
-//   origin: 'http://localhost:3006',
-//   credentials: true
-// }));
+app.use(cors({
+  origin: 'http://localhost:3006',
+  credentials: true
+}));
 
 // Inbuilt express body parsers
 app.use(express.json());
