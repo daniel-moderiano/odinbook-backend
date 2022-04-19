@@ -52,6 +52,11 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     throw new Error('User not found');
   }
 
+  if (!user.profilePic.imageUrl) {    // user does not have a profile picture uploaded
+    // Set to undefined to match format of other getUser functions when the user has no image
+    user.profilePic = undefined;
+  }
+
   res.status(200).json({
     user: user
   });
@@ -119,7 +124,7 @@ const registerUser = [
         email: req.user.email,
         firstName: req.user.firstName,
         lastName: req.user.lastName,
-        profilePic: req.user.profilePic,
+        profilePic: req.user.profilePic.image ? req.user.profilePic : undefined,
       }})
     },
 ];
@@ -182,7 +187,7 @@ const loginUser = [
         email: req.user.email,
         firstName: req.user.firstName,
         lastName: req.user.lastName,
-        profilePic: req.user.profilePic,
+        profilePic: req.user.profilePic.image ? req.user.profilePic : undefined,
       }})
     },
 ];
