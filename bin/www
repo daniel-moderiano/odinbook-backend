@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // File specifically to create the server on specified port.
 require('dotenv').config();
 const app = require('../app');

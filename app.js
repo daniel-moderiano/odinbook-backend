@@ -4,7 +4,6 @@ const express = require('express');
 const postRoutes = require('./routes/postRoutes');
 const userRoutes = require('./routes/userRoutes');
 const friendRoutes = require('./routes/friendRoutes');
-const app = express();
 const cors = require('cors');
 const { errorHandler } = require('./middleware/errorMiddleware');
 const session = require('express-session');
@@ -12,6 +11,7 @@ const MongoStore = require('connect-mongo');
 const passport = require('passport');
 const compression = require('compression');
 const helmet = require('helmet');
+const app = express();
 
 // Set basic security HTTP headers. Initial testing suggests the CSP does not block any key app features
 app.use(helmet());
