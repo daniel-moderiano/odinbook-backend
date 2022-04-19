@@ -141,11 +141,13 @@ const updatePost = [
       // A new image property should be created if a new image exists, otherwise a blank property is used to overwrite the existing image data
       // Booleans cannot be set in form data object, so check for string version of boolean
       if (req.body.imageUpdated === 'true') {
-        cloudinary.uploader.destroy(post.image.imageId, (err, result) => {
-          if (err) {    // error with delete operation, however save to continue with update operation
-            console.log(err);
-          }
-        });
+        if (post.image.imageId) {   // previous image exists on db/cloudinary
+          cloudinary.uploader.destroy(post.image.imageId, (err, result) => {
+            if (err) {    // error occurred with deletion, however safe to continue db post update
+              console.log(err);
+            }
+          });
+        }
         if (req.file) {   // new image added
         // Generate alt text for the new image, and overrride any existing alt text
           let altText = '';

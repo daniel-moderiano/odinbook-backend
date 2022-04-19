@@ -9,6 +9,7 @@ const config = require('../config/cloudinary');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const { removeAllLikes, removeAllPosts, removeAllComments, removeAllFriends, removeUser } = require('./accountController');
+const generateAltText = require('../utils/altTextGenerator');
   
 // Note req.params.id of any kind is cast to ObjectID before a search query is run. Therefore, injection attacks do not have a foothold here (error will be thrown regardless).
 
@@ -281,12 +282,15 @@ const updateUserPic = [
       // A new image property should be created if a new image exists, otherwise a blank property is used to overwrite the existing image data
       // Booleans cannot be set in form data object, so check for string version of boolean
       if (req.body.imageUpdated === 'true') {
-        // Delete old image
-        cloudinary.uploader.destroy(user.profilePic.imageId, (err, result) => {
-          if (err) {    // error occurred with deletion, however safe to continue db user update
-            console.log(err);
-          }
-        });
+        // Delete old image if one exists
+        if (user.profilePic.imageId) {
+          cloudinary.uploader.destroy(user.profilePic.imageId, (err, result) => {
+            if (err) {    // error occurred with deletion, however safe to continue db user update
+              console.log(err);
+            }
+          });
+        }
+
         if (req.file) {   // new image added 
           // Generate alt text for the new image, and override any previous altText in User doc
           let altText = '';

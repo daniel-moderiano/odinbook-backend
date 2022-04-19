@@ -6,6 +6,7 @@ const generateAltText = async (imageUrl) => {
     // Gather a base object containing lots of data about the image (e.g. tags, descriptions, and metadata)
     const imageInfo = await computerVisionClient.describeImage(imageUrl);
     // Extract the most confident human-readable description, i.e. the first caption
+    console.log(imageInfo.captions[0].text);
     return imageInfo.captions[0].text;
   } catch (error) {
     console.log(error);
