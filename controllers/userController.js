@@ -124,7 +124,7 @@ const registerUser = [
         email: req.user.email,
         firstName: req.user.firstName,
         lastName: req.user.lastName,
-        profilePic: req.user.profilePic.image ? req.user.profilePic : undefined,
+        profilePic: req.user.profilePic.imageUrl ? req.user.profilePic : undefined,
       }})
     },
 ];
@@ -187,7 +187,7 @@ const loginUser = [
         email: req.user.email,
         firstName: req.user.firstName,
         lastName: req.user.lastName,
-        profilePic: req.user.profilePic.image ? req.user.profilePic : undefined,
+        profilePic: req.user.profilePic.imageUrl ? req.user.profilePic : undefined,
       }})
     },
 ];
