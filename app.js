@@ -15,7 +15,7 @@ const helmet = require('helmet');
 const app = express();
 
 // Set basic security HTTP headers. Initial testing suggests the CSP does not block any key app features
-app.use(helmet());
+// app.use(helmet());
 
 // Allow requests from any frontend domain specifically. Credientials must be true to allow cookies
 app.use(cors({
@@ -24,7 +24,7 @@ app.use(cors({
 }));
 
 // ! I am unsure exactly how the trust proxy integrates with cookies and sessions but this is absolutely critical for cookies to work in production. Do NOT remove!
-app.set('trust proxy', 1);
+// app.set('trust proxy', 1);
 
 // Inbuilt express body parsers
 app.use(express.json());
@@ -42,12 +42,6 @@ app.use(session({
   store: sessionStore,
   resave: false,
   saveUninitialized: false,
-  cookie: {
-    sameSite: "none",
-    httpOnly: true,
-    secure: true,
-    maxAge: 1000 * 60 * 60 * 24 * 7,    // 7 days
-  },
 }));
 
 // PASSPORT SETUP
@@ -75,10 +69,22 @@ app.use('/api/posts', postRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/friends', friendRoutes);
 
-// Used as an easy confirmation that backend is running in deployment
-app.get("/", (req, res) => {
-  res.send('API running...')
-});
+// Serve frontend from same server as backend
+if (process.env.NODE_ENV === 'production') {
+  // Set the static folder to the React build folder in frontend
+  app.use(express.static(path.join(__dirname, '../frontend/build')));
+
+  // Serve the React html file for any non-API routes
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../', 'frontend', 'build', 'index.html'));
+  })
+} else {
+  // A user-friendly message if trying to access homepage while in dev mode
+  app.get("/", (req, res) => {
+    res.send('API running in development mode')
+  });
+}
+
 
 // Use error handler AFTER all routes are defined above
 app.use(errorHandler);
