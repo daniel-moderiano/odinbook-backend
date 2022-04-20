@@ -23,6 +23,7 @@ app.use(cors({
   credentials: true
 }));
 
+// ! I am unsure exactly how the trust proxy integrates with cookies and sessions but this is absolutely critical for cookies to work in production. Do NOT remove!
 app.set('trust proxy', 1);
 
 // Inbuilt express body parsers

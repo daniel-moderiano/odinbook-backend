@@ -201,8 +201,9 @@ const logoutUser = asyncHandler(async (req, res) => {
     throw new Error('Unable to log out')
   }
 
-  // Session exists, log the user out
+  // Session exists, log the user out and destroy session
   req.logout();
+  req.session.destroy();
 
   res.status(200).json({  // Return status OK and logout message
     message: 'Log out successful'
