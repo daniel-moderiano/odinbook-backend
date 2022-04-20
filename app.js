@@ -39,6 +39,11 @@ app.use(session({
   store: sessionStore,
   resave: false,
   saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none"
+  },
 }));
 
 // PASSPORT SETUP
