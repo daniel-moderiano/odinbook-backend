@@ -1,6 +1,7 @@
 // Define all app-related functionality here, including use of middleware and routes. Do not call server listen func here.
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const postRoutes = require('./routes/postRoutes');
 const userRoutes = require('./routes/userRoutes');
 const friendRoutes = require('./routes/friendRoutes');
@@ -64,6 +65,20 @@ app.get('/auth/facebook/callback',
 app.use('/api/posts', postRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/friends', friendRoutes);
+
+// Serve frontend (from React build dir) direct from express. This allows a single port to serve both back/frontend
+if (process.env.NODE_ENV === 'production') {
+  // Setup a static folder to serve static assets
+  app.use(express.static(path.join(__dirname, '../frontend/build')));
+  // Set all non API routes to serve the React index.html build file
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../', 'frontend', 'build', 'index.html'));
+  })
+} else {
+  app.get("/", (req, res) => {
+    res.send('API running in development mode.')
+  })
+}
 
 // Use error handler AFTER all routes are defined above
 app.use(errorHandler);
