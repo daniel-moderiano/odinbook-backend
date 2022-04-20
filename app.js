@@ -19,7 +19,7 @@ app.use(helmet());
 
 // Allow requests from any frontend domain specifically. Credientials must be true to allow cookies
 app.use(cors({
-  origin: 'http://localhost:3006',
+  origin: process.env.FRONTEND_URL,
   credentials: true
 }));
 
