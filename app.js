@@ -23,6 +23,8 @@ app.use(cors({
   credentials: true
 }));
 
+app.set('trust proxy', 1);
+
 // Inbuilt express body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -38,12 +40,12 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   store: sessionStore,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
     sameSite: "none",
     httpOnly: true,
     secure: true,
-    sameSite: "none"
+    maxAge: 1000 * 60 * 60 * 24 * 30,
   },
 }));
 
