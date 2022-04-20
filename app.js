@@ -61,7 +61,7 @@ app.get('/auth/facebook/callback',
   passport.authenticate('facebook'),
   function(req, res) {
     // Successful authentication, redirect to frontend client URL.
-    res.redirect(process.env.FRONTEND_URL);
+    res.redirect(process.env.BACKEND_URL);
 });
 
 // Use routes

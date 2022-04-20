@@ -9,7 +9,7 @@ const strategyOptions = {
   clientID: process.env['FACEBOOK_APP_ID'],
   clientSecret: process.env['FACEBOOK_APP_SECRET'],
   // When the user is successfully authenticated via the FB login, they will be redirected to this IRL
-  callbackURL: `${process.env.FRONTEND_URL}/auth/facebook/callback`,
+  callbackURL: `${process.env.BACKEND_URL}auth/facebook/callback`,
   profileFields: ['id', 'name', 'email', 'picture.type(large)']
 }
 
