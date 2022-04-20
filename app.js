@@ -66,19 +66,10 @@ app.use('/api/posts', postRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/friends', friendRoutes);
 
-// Serve frontend (from React build dir) direct from express. This allows a single port to serve both back/frontend
-if (process.env.NODE_ENV === 'production') {
-  // Setup a static folder to serve static assets
-  app.use(express.static(path.join(__dirname, '../frontend/build')));
-  // Set all non API routes to serve the React index.html build file
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../', 'frontend', 'build', 'index.html'));
-  })
-} else {
-  app.get("/", (req, res) => {
-    res.send('API running in development mode.')
-  })
-}
+// Used as an easy confirmation that backend is running in deployment
+app.get("/", (req, res) => {
+  res.send('API running...')
+});
 
 // Use error handler AFTER all routes are defined above
 app.use(errorHandler);
