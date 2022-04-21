@@ -23,9 +23,6 @@ app.use(cors({
   credentials: true
 }));
 
-// ! I am unsure exactly how the trust proxy integrates with cookies and sessions but this is absolutely critical for cookies to work in production. Do NOT remove!
-// app.set('trust proxy', 1);
-
 // Inbuilt express body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -61,7 +58,7 @@ app.get('/auth/facebook/callback',
   passport.authenticate('facebook'),
   function(req, res) {
     // Successful authentication, redirect to frontend client URL.
-    res.redirect(process.env.FRONTEND_URL);
+    res.redirect(process.env.HOST_URL);
 });
 
 // Use routes
@@ -84,7 +81,6 @@ if (process.env.NODE_ENV === 'production') {
     res.send('API running in development mode')
   });
 }
-
 
 // Use error handler AFTER all routes are defined above
 app.use(errorHandler);
