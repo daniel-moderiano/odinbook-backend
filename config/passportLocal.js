@@ -12,7 +12,8 @@ const customFields = {
 
 const verifyCallback = async (username, password, done) => {
   // Check for existing user in db, and if found, return only name and email
-  const user = await User.findOne({ email: username });
+  // Add collation with strength 2 to perform case-insensitive search
+  const user = await User.findOne({ email: username }).collation({ locale: 'en', strength: 2 });
 
   if (!user) {  // User does not exist in db
     return done(null, false, { message: 'User not found' })

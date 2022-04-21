@@ -90,8 +90,8 @@ const registerUser = [
     if (!errors.isEmpty()) {
       res.status(400).json(errors.array());   // Do not throw single error here, pass all validation errors
     } else {
-      // Check for existing user in db
-      const userExists = await User.findOne({ email: req.body.email });
+      // Check for existing user in db (using case insensitive search)
+      const userExists = await User.findOne({ email: req.body.email }).collation({ locale: 'en', strength: 2 });
 
       if (userExists) {
         res.status(400);
@@ -237,9 +237,17 @@ const updateUser = [
       // Check if user exists in db
       const user = await User.findById(req.params.userId, { 'password': 0 });
 
-      if (!user) {  // comment not found in db
+      if (!user) {
         res.status(400);
         throw new Error('User not found');
+      }
+
+      // Check the user is not attempting to change to an existing email address
+      const emailExists = await User.findOne({ email: req.body.email }).collation({ locale: 'en', strength: 2 });
+
+      if (emailExists) {
+        res.status(400);
+        throw new Error('Email already in use')
       }
 
       user.firstName = req.body.firstName,
@@ -318,7 +326,6 @@ const updateUserPic = [
     }
   }),
 ];
-
 
 // @desc    Delete single user
 // @route   DELETE /api/user/:userId
