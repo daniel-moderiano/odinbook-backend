@@ -19,7 +19,7 @@ const app = express();
 
 // Allow requests from any frontend domain specifically. Credientials must be true to allow cookies
 app.use(cors({
-  origin: process.env.FRONTEND_URL,
+  origin: process.env.HOST_URL,
   credentials: true
 }));
 
