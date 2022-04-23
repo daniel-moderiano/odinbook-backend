@@ -17,11 +17,13 @@ const app = express();
 // Set basic security HTTP headers. Initial testing suggests the CSP does not block any key app features
 // app.use(helmet());
 
-// Allow requests from any frontend domain specifically. Credientials must be true to allow cookies
-app.use(cors({
-  origin: process.env.HOST_URL,
-  credentials: true
-}));
+// Allow requests from any frontend domain specifically. Credientials must be true to allow cookies. Should only be needed for development!
+if (process.env.NODE_ENV === 'development') {
+  app.use(cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true
+  }));
+}
 
 // Inbuilt express body parsers
 app.use(express.json());
@@ -66,6 +68,11 @@ app.get('/auth/facebook/callback',
     // Successful authentication, redirect to frontend client URL.
     res.redirect(process.env.HOST_URL);
 });
+
+// ! test route only, remove in end product
+app.get('/test', (req,res) => {
+  res.send('done')
+})
 
 // Use routes
 app.use('/api/posts', postRoutes);
