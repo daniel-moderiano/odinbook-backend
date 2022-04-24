@@ -38,6 +38,6 @@ test('errorHandler returns error status code if manually provided', done => {
 test('errorHandler returns manually set error message if provided', async () => {
   const res = await request(app).post('/').send({ data: '5678' }).set('Accept', 'application/json')
   expect(res.headers['content-type']).toMatch(/json/);
-  expect(res.body.message).toBe('Incorrect data sent');
+  expect(res.body.errorMsg).toBe('Incorrect data sent');
   expect(res.status).toBe(400);
 });
