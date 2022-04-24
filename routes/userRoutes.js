@@ -11,6 +11,7 @@ router.post('/register', registerUser);
 router.get('/current', protectRoute, getCurrentUser);
 router.route('/:userId')
   .get(protectRoute, getUser)
+  .delete(protectRoute, deleteUser)
   .put(protectRoute, updateUser);
 router.route('/:userId/posts').get(protectRoute, getUserPosts);
 router.route('/:userId/feed').get(protectRoute, getUserFeed);

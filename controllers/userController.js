@@ -327,6 +327,33 @@ const updateUserPic = [
   }),
 ];
 
+// @desc    Delete single user
+// @route   DELETE /api/user/:userId
+// @access  Private
+const deleteUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.userId);
+
+  if (!user) {  // User not found in db
+    res.status(400);
+    throw new Error('User not found');
+  }
+  // Remove image from cloudinary if image exists
+  if (user.profilePic) {
+    cloudinary.uploader.destroy(user.profilePic.imageId, (err, result) => {
+      if (err) {    // error occurred with deletion, however safe to continue db user deletion
+        console.log(err);
+      }
+    });
+  }
+  // User found with no errors; remove from db
+  await user.remove();
+  res.status(200).json({
+    user: { 
+      id: req.params.userId 
+    }
+  }); // Might consider returning the deleted user itself here?
+});
+
 // @desc    Delete entire user account, including all traces of the user across the DB
 // @route   DELETE /api/user/:userId/account
 // @access  Private
@@ -472,6 +499,7 @@ module.exports = {
   loginTestUser,
   getUser,
   getUsers,
+  deleteUser,
   updateUser,
   updateUserPic,
   logoutUser,
