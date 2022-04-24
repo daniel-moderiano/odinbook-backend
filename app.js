@@ -71,7 +71,7 @@ app.get('/auth/facebook/callback',
 
 // ! test route only, remove in end product
 app.get('/test', (req,res) => {
-  res.send('done')
+  res.send({ msg: 'done'})
 })
 
 // Use routes
