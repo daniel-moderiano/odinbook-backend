@@ -1,41 +1,43 @@
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 const request = require('supertest');
-const { initialiseMongoServer } = require('./dbConfig');
-// const app = require('../app');
-const express = require('express')
 const { getUser } = require('../controllers/userController');
-const app = express();
 const User = require('../models/UserModel');
 const mongoose = require('mongoose');
+const express = require('express');
 
-const db = initialiseMongoServer();
-
-beforeAll(async () => {
-  const id = new mongoose.Types.ObjectId("4c8a331bda76c559ef000004")
-  // Create new user with all required data
-  const newUser = new User({
-    firstName: 'Peter',
-    lastName: 'Parker',
-    email: 'pete@gmail.com',
-    password: 'test123', 
-    friends: [],
-    _id: id,
-  });
-
-  // Save user and pass on to authentication step to automatically log the user in
-  await newUser.save();
-});
+// Setup new app instance
+const app = express();
 
 // Use the controller
 app.get('/:userId', getUser);
 
-test("test getUser controller", done => {
-  request(app)
-    .get("/4c8a331bda76c559ef000004")
-    // .expect("Content-Type", /json/)
-    // .expect({ msg: 'done' })
-    .expect(200, done);
-  // const res = await request(app).get('/');
-  // console.log(res );
-});
+// Express app and jest db env setup
+require('./dbSetupTeardown');
+
+describe('getUser functionality', () => {
+  // Add pseudo user to db
+  beforeAll(async () => {
+    const id = new mongoose.Types.ObjectId("4c8a331bda76c559ef000004")
+    // Create new user with all required data
+    const newUser = new User({
+      firstName: 'Peter',
+      lastName: 'Parker',
+      email: 'pete@gmail.com',
+      password: 'test123', 
+      friends: [],
+      _id: id,
+    });
+  
+    // Save user and pass on to authentication step to automatically log the user in
+    await newUser.save();
+  });
+
+  it("retrieves correct user data", async () => {
+    const res = await request(app).get("/4c8a331bda76c559ef000004");
+    expect(res.headers['content-type']).toMatch(/json/);
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.user.firstName).toBe('Peter');
+  });
+})
+
