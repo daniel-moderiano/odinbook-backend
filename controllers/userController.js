@@ -401,15 +401,11 @@ const deleteUserAccount = asyncHandler(async (req, res) => {
 // @access  Private
 const getUserPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find({ 'user': req.params.userId })
-  .populate('user', 'firstName lastName profilePic')
-  .populate('comments');
+    .sort({ createdAt: -1 })    // most recent posts will be first in the returned array
+    .populate('user', 'firstName lastName profilePic')
+    .populate('comments');
 
-  // Sort the feed by date posted using native JS date comparisons
-  const sortedPosts = posts.sort((a, b) => {
-    return (a.createdAt < b.createdAt) ? 1 : ((a.createdAt > b.createdAt) ? -1 : 0);
-  });
-
-  res.status(200).json(sortedPosts)
+  res.status(200).json(posts);
 });
 
 // @desc    Get all posts making up a user's feed, sorted by date recency (consider limiting to past X months only)
