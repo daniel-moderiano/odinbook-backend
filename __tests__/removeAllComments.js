@@ -23,7 +23,7 @@ describe('Confirm user has expanded presence in the database', () => {
   })
 }); 
 
-describe('removeAllLikes functionality', () => {
+describe('removeAllComments functionality', () => {
   beforeAll(() => removeAllComments(userId))
 
   it("removes all user's comments", async () => {
