@@ -242,12 +242,13 @@ const updateUser = [
         throw new Error('User not found');
       }
 
-      // Check the user is not attempting to change to an existing email address
-      const emailExists = await User.findOne({ email: req.body.email }).collation({ locale: 'en', strength: 2 });
-
-      if (emailExists) {
-        res.status(400);
-        throw new Error('Email already in use')
+      // Return custom error if user tries to use an existing email address
+      if (user.email !== req.body.email) {    // user has attempted to change their email address
+        const emailInUse = await User.findOne({ email: req.body.email });
+        if (emailInUse) {   // new email already exists. Cannot change email
+          res.status(400);
+          throw new Error('This email is already in use');
+        }
       }
 
       user.firstName = req.body.firstName,
