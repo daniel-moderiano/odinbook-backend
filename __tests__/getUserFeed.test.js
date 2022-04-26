@@ -17,23 +17,36 @@ require('./dbSetupTeardown');
 const userId = '4c8a331bda76c559ef000004';
 
 describe('getUser controller', () => {
-  it("retrieves only those posts by the user specified", async () => {
+  it("retrieves all of the user's own posts and friends posts", async () => {
     const res = await request(app).get(`/${userId}`);
     expect(res.headers['content-type']).toMatch(/json/);
     expect(res.statusCode).toEqual(200);
-    // There are three (out of four) posts by this user in the db 
-    expect(res.body.length).toBe(3);
+    // There are three own posts, and one post by each of two friends to give 5 total
+    expect(res.body.length).toBe(5);
   });
 
   it("sorts returned posts by created date (most recent first)", async () => {
     const res = await request(app).get(`/${userId}`);
     expect(res.headers['content-type']).toMatch(/json/);
     expect(res.statusCode).toEqual(200);
-    console.log(res.body);
-    // Confirm all 3 posts are in date order
-    expect(res.body[0].datePosted).toBe('March 20, 2021');
-    expect(res.body[1].datePosted).toBe('December 2, 2020');
-    expect(res.body[2].datePosted).toBe('July 20, 2020');
+    // Confirm all 5 posts are in date order
+    expect(res.body[0].datePosted).toBe('December 20, 2021');
+    expect(res.body[1].datePosted).toBe('April 20, 2021');
+    expect(res.body[2].datePosted).toBe('March 20, 2021');
+    expect(res.body[3].datePosted).toBe('December 2, 2020');
+    expect(res.body[4].datePosted).toBe('July 20, 2020');
+  });
+
+  it("does not include non-friend posts", async () => {
+    const res = await request(app).get(`/${userId}`);
+    expect(res.headers['content-type']).toMatch(/json/);
+    expect(res.statusCode).toEqual(200);
+
+    // Filter out any posts by user 'Norman Osborn', a non-friend
+    const authors = res.body.filter((post) => post.user.firstName === 'Norman')
+
+    expect(authors.length).toBe(0);
+
   });
 });
 

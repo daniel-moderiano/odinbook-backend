@@ -44,7 +44,7 @@ const users = [
       },
       {
         "user": "4c8a331bda76c559ef000009",
-        "status": "deletedRequest",
+        "status": "friend",
       },
     ],
     _id: peterId,
@@ -162,7 +162,7 @@ const posts = [
     "text": "Hello it's me, MJ!",
     "likes": [],
     "comments": [],
-    "createdAt": "2021-04-20T12:38:54.295Z",
+    "createdAt": "2021-12-20T12:38:54.295Z",
     "updatedAt": "2022-04-19T02:31:49.436Z",
   },
   {
@@ -170,7 +170,7 @@ const posts = [
     "text": "You can't do this to me!",
     "likes": [],
     "comments": [],
-    "createdAt": "2021-04-20T12:38:54.295Z",
+    "createdAt": "2021-06-20T12:38:54.295Z",
     "updatedAt": "2022-04-19T02:31:49.436Z",
   }
 ];
