@@ -152,16 +152,13 @@ const likeComment = asyncHandler(async (req, res) => {
 // @route   DELETE /api/posts/:postId/comments/:commentId
 // @access  Private
 const deleteComment = asyncHandler(async (req, res) => {
-  // Search comment directly by ID
-  const comment = await Comment.findById(req.params.commentId);
+  // Search comment directly by ID and delete, returning the deleted comment
+  const comment = await Comment.findOneAndDelete({ _id: req.params.commentId });
 
   if (!comment) {  // comment not found in db
     res.status(400);
     throw new Error('Comment not found');
   }
-
-  // No errors, remove comment from db
-  await comment.remove();
 
   // Also remove the reference to this comment in the corresponding post
   await Post.updateOne(
@@ -169,7 +166,7 @@ const deleteComment = asyncHandler(async (req, res) => {
     { $pull: { 'comments': req.params.commentId } }   // remove the comment from the comments array
   )
 
-  res.status(200).json({ id: req.params.commentId });  // Consider also returning the deleted comment
+  res.status(200).json(comment);  // Consider also returning the deleted comment
 });
 
 module.exports = {

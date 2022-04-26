@@ -5,6 +5,7 @@ const { updateUser } = require('../controllers/userController');
 const express = require('express');
 
 // Setup new app instance
+// ! Do not forget body parsers, tests will all fail otherwise
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -20,23 +21,21 @@ const userId = '4c8a331bda76c559ef000004';
 
 describe('updateUser controller', () => {
   it("successfully updates basic user info (i.e. last name)", async () => {
-    it("correctly populates nested like fields", async () => {
-      const res = await request(app)
-        .put(`/posts/${postId}/comments/${commentId}`)
-        // .type('form')
-        .send({
-          text: 'updated'
-        });
-      expect(res.headers['content-type']).toMatch(/json/);
-      expect(res.statusCode).toEqual(200);
-      expect(res.body.text).toBe('updated');
-    });
+    const res = await request(app)
+      .put(`/${userId}`)
+      .send({
+        firstName: 'Peter',
+        lastName: 'Porker', 
+        email: 'peter@gmail.com', 
+      });
+    expect(res.headers['content-type']).toMatch(/json/);
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.lastName).toBe('Porker');
   });
 
   it("does not attempt to update bio information if none is provided", async () => {
     const res = await request(app)
     .put(`/${userId}`)
-    .type('form')
     .send({
       firstName: 'Peter',
       lastName: 'Parker', 
@@ -50,7 +49,6 @@ describe('updateUser controller', () => {
   it("adds new bio fields if provided in update request", async () => {
     const res = await request(app)
     .put(`/${userId}`)
-    .type('form')
     .send({
       firstName: 'Peter',
       lastName: 'Parker', 
@@ -65,7 +63,6 @@ describe('updateUser controller', () => {
   it("returns validation errors if user attempts to update without required fields", async () => {
     const res = await request(app)
     .put(`/${userId}`)
-    .type('form')
     .send({
       firstName: 'Peter',
       email: 'peter@gmail.com', 
@@ -80,7 +77,6 @@ describe('updateUser controller', () => {
   it("provides helpful error is user attempts to change email to one already existing in db", async () => {
     const res = await request(app)
     .put(`/${userId}`)
-    .type('form')
     .send({
       firstName: 'Peter',
       lastName: 'Parker', 

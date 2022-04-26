@@ -202,7 +202,7 @@ const comments = [
   {   // Harry comments on Norman's post, liked by MJ and Peter
     "_id": harryCommentId,
     "user": "4c8a331bda76c559ef000005",
-    "text": "It's a jungle out there",
+    "text": "You'll bounce back Dad",
     "likes": [
       "4c8a331bda76c559ef000004",
       "4c8a331bda76c559ef000009"
@@ -212,7 +212,7 @@ const comments = [
   {   // Peter comments on MJ's post, liked by MJ
     "_id": "6254108b9302b7824770eb68",
     "user": "4c8a331bda76c559ef000004",
-    "text": "It's a jungle out there",
+    "text": "Hi MJ!",
     "likes": [
       "4c8a331bda76c559ef000009"
     ],
