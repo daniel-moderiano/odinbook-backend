@@ -11,11 +11,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const passport = require('passport');
 const compression = require('compression');
-const helmet = require('helmet');
 const app = express();
-
-// Set basic security HTTP headers. Initial testing suggests the CSP does not block any key app features
-// app.use(helmet());
 
 // Allow requests from any frontend domain specifically. Credientials must be true to allow cookies. Should only be needed for development!
 if (process.env.NODE_ENV === 'development') {
@@ -41,12 +37,12 @@ app.use(session({
   store: sessionStore,
   resave: false,
   saveUninitialized: false,
-  // cookie: {   // cannot set security options in development as localhost runs on http only
-  //   secure: process.env.NODE_ENV === 'development' ? false : true, 
-  //   httpOnly: process.env.NODE_ENV === 'development' ? false : true,
-  //   sameSite: process.env.NODE_ENV === 'development' ? false : true,
-  //   maxAge: 24 * 60 * 60 * 1000 * 7   // 7 days
-  // }
+  cookie: {   // cannot set security options in development as localhost runs on http only
+    secure: process.env.NODE_ENV === 'development' ? false : true, 
+    httpOnly: process.env.NODE_ENV === 'development' ? false : true,
+    // sameSite: process.env.NODE_ENV === 'development' ? false : true,
+    maxAge: 24 * 60 * 60 * 1000 * 7   // 7 days
+  }
 }));
 
 // PASSPORT SETUP
