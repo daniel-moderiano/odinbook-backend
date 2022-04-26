@@ -22,7 +22,7 @@ const harryId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000005");
     firstName: 'Peter',
     lastName: 'Parker',
     email: 'peter@gmail.com',
-    password: 'test123', 
+    password: '$2a$10$gARuP4KVU.uD0JmMzZ1Ox.cz.ZjshoDvd0DzIzHwU/tU7YqS.PHGO', 
     friends: [],
     _id: peterId,
   };
