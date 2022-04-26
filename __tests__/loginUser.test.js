@@ -1,7 +1,6 @@
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 const request = require('supertest');
-const { getUser } = require('../controllers/userController');
 const app = require('../app');
 
 // Import db setup and teardown functionality
