@@ -15,11 +15,6 @@ const generateAltText = require('../utils/altTextGenerator');
 const getAllPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find({})
     .populate('user', 'firstName lastName profilePic')
-    .populate({   // Consider whether this is useful at this stage, or whether a separate getComments call is preferred
-      path: 'comments',
-      populate: { path: 'user', select: 'firstName lastName profilePic' },
-      populate: { path: 'likes', select: 'firstName lastName profilePic' }
-    })
     .populate({
       path: 'likes',
       select: 'firstName lastName profilePic'
@@ -34,11 +29,6 @@ const getPost = asyncHandler(async (req, res) => {
   // Retrieve post and populate only those user details required for display on posts (virtual 'fullName' can be called when first and last name are populated)
   const post = await Post.findById(req.params.postId)
     .populate('user', 'firstName lastName profilePic')
-    // .populate({   // Consider whether this is useful at this stage, or whether a separate getComments call is preferred
-    //   path: 'comments',
-    //   populate: { path: 'user', select: 'firstName lastName profilePic' },
-    //   populate: { path: 'likes', select: 'firstName lastName profilePic' }
-    // })
     .populate({
       path: 'likes',
       select: 'firstName lastName profilePic'
