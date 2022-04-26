@@ -485,6 +485,7 @@ const getUserFriends = asyncHandler(async (req, res) => {
     acceptedFriends: user.friends.filter((friendEntry) => friendEntry.status === 'friend'),
     incomingRequests: user.friends.filter((friendEntry) => friendEntry.status === 'incomingRequest'),
     outgoingRequests: user.friends.filter((friendEntry) => friendEntry.status === 'outgoingRequest'),
+    deletedRequests: user.friends.filter((friendEntry) => friendEntry.status === 'deletedRequest'),
   }
 
   res.status(200).json(sortedFriends)

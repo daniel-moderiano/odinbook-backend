@@ -14,6 +14,9 @@ afterAll(async () => {
 
 const peterId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000004");
 const harryId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000005");
+const normanId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000006");
+const gwenId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000007");
+const eddieId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000008");
 
 const users = [
   {
@@ -21,7 +24,24 @@ const users = [
     lastName: 'Parker',
     email: 'peter@gmail.com',
     password: '$2a$10$gARuP4KVU.uD0JmMzZ1Ox.cz.ZjshoDvd0DzIzHwU/tU7YqS.PHGO', 
-    friends: [],
+    friends: [
+      {
+        "user": "4c8a331bda76c559ef000005",
+        "status": "friend",
+      },
+      {
+        "user": "4c8a331bda76c559ef000006",
+        "status": "incomingRequest",
+      },
+      {
+        "user": "4c8a331bda76c559ef000007",
+        "status": "outgoingRequest",
+      },
+      {
+        "user": "4c8a331bda76c559ef000008",
+        "status": "deletedRequest",
+      },
+    ],
     _id: peterId,
   },
   {
@@ -29,8 +49,55 @@ const users = [
     lastName: 'Osborn',
     email: 'harry@gmail.com',
     password: 'test123', 
-    friends: [],
+    friends: [
+      {
+        "user": "4c8a331bda76c559ef000004",
+        "status": "friend",
+      },
+            {
+        "user": "4c8a331bda76c559ef000006",
+        "status": "friend",
+      },
+    ],
     _id: harryId,
+  },
+  {
+    firstName: 'Norman',
+    lastName: 'Osborn',
+    email: 'norman@gmail.com',
+    password: 'test123', 
+    friends: [
+      {
+        "user": "4c8a331bda76c559ef000005",
+        "status": "friend",
+      },
+      {
+        "user": "4c8a331bda76c559ef000004",
+        "status": "outgoingRequest",
+      },
+    ],
+    _id: normanId,
+  },
+  {
+    firstName: 'Gwen',
+    lastName: 'Stacey',
+    email: 'gwen@gmail.com',
+    password: 'test123', 
+    friends: [
+      {
+        "user": "4c8a331bda76c559ef000004",
+        "status": "incomingRequest",
+      },
+    ],
+    _id: gwenId,
+  },
+  {
+    firstName: 'Eddie',
+    lastName: 'Brock',
+    email: 'eddie@gmail.com',
+    password: 'test123', 
+    friends: [],
+    _id: eddieId,
   },
 ];
 
@@ -82,5 +149,5 @@ const posts = [
 
   Post.insertMany(posts, (err, docs) => {
     if (err) { console.log(err) };
-  })
+  });
 })();
