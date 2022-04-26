@@ -16,23 +16,6 @@ app.get('/:userId', getUser);
 require('./dbSetupTeardown');
 
 describe('getUser functionality', () => {
-  // Add pseudo user to db
-  beforeAll(async () => {
-    const id = new mongoose.Types.ObjectId("4c8a331bda76c559ef000004")
-    // Create new user with all required data
-    const newUser = new User({
-      firstName: 'Peter',
-      lastName: 'Parker',
-      email: 'pete@gmail.com',
-      password: 'test123', 
-      friends: [],
-      _id: id,
-    });
-  
-    // Save user and pass on to authentication step to automatically log the user in
-    await newUser.save();
-  });
-
   it("retrieves correct user data", async () => {
     const res = await request(app).get("/4c8a331bda76c559ef000004");
     expect(res.headers['content-type']).toMatch(/json/);
