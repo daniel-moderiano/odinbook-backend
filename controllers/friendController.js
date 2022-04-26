@@ -183,6 +183,7 @@ const handleFriendRequest = asyncHandler(async (req, res) => {
   res.json(updatedRecipient);
 });
 
+// Export modules separately for testing purposes
 module.exports = {
   checkExistingEntries,
   modifyForAcceptRequest,

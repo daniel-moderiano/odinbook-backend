@@ -19,6 +19,8 @@ const gwenId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000007");
 const eddieId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000008");
 const mjId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000009");
 
+const normanPostId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000010");
+
 const users = [
   {
     firstName: 'Peter',
@@ -161,17 +163,57 @@ const posts = [
     "user": "4c8a331bda76c559ef000009",
     "text": "Hello it's me, MJ!",
     "likes": [],
-    "comments": [],
+    "comments": [
+      "6254108b9302b7824770eb68"
+    ],
     "createdAt": "2021-12-20T12:38:54.295Z",
     "updatedAt": "2022-04-19T02:31:49.436Z",
   },
   {
+    "_id": normanPostId,
     "user": "4c8a331bda76c559ef000006",
     "text": "You can't do this to me!",
-    "likes": [],
-    "comments": [],
+    "likes": [
+
+    ],
+    "comments": [
+      "6254108b9302b7824770eb6f",
+      "6254108b9302b7824770eb67"
+    ],
     "createdAt": "2021-06-20T12:38:54.295Z",
     "updatedAt": "2022-04-19T02:31:49.436Z",
+  }
+];
+
+const comments = [
+  {   // Peter comments on Norman's post, liked by Harry and Norman
+    "_id": "6254108b9302b7824770eb6f",
+    "user": "4c8a331bda76c559ef000004",
+    "text": "It's a jungle out there",
+    "likes": [
+      "4c8a331bda76c559ef000005",
+      "4c8a331bda76c559ef000006"
+    ],
+    "createdAt": "2020-12-03T10:35:02.373Z",
+  },
+  {   // Harry comments on Norman's post, liked by MJ and Peter
+    "_id": "6254108b9302b7824770eb67",
+    "user": "4c8a331bda76c559ef000005",
+    "text": "It's a jungle out there",
+    "likes": [
+      "4c8a331bda76c559ef000004",
+      "4c8a331bda76c559ef000009"
+    ],
+    "createdAt": "2020-12-03T10:35:02.373Z",
+  },
+  {   // Peter comments on MJ's post, liked by MJ
+    "_id": "6254108b9302b7824770eb68",
+    "user": "4c8a331bda76c559ef000004",
+    "text": "It's a jungle out there",
+    "likes": [
+      "4c8a331bda76c559ef000009"
+    ],
+    "createdAt": "2020-12-03T10:35:02.373Z",
   }
 ];
 
@@ -183,5 +225,9 @@ const posts = [
 
   Post.insertMany(posts, (err, docs) => {
     if (err) { console.log(err) };
+  });
+
+  Comment.insertMany(comments, (err, docs) => {
+    if (err) { console.log(err); }
   });
 })();
