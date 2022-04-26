@@ -1,5 +1,3 @@
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 const { removeAllLikes } = require('../controllers/accountController');
 const Post = require('../models/PostModel');
 const Comment = require('../models/CommentModel');
