@@ -1,14 +1,8 @@
-const asyncHandler = require('express-async-handler');
-const bcrypt = require('bcryptjs');
 const User = require('../models/UserModel');
 const Post = require('../models/PostModel');
 const Comment = require('../models/CommentModel');
-const { body, validationResult } = require("express-validator");
-const upload = require('../config/multer');
 const cloudinary = require('cloudinary').v2;
 const config = require('../config/cloudinary');
-const mongoose = require('mongoose');
-const passport = require('passport');
 
 // This function has been delegated to it's own module because of the complexity involved in this multi-step db query
 

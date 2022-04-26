@@ -33,6 +33,7 @@ describe('updateComment controller', () => {
     const res = await request(app)
       .put(`/posts/${postId}`)
       .send({ text: 'new text' });
+
     expect(res.headers['content-type']).toMatch(/json/);
     expect(res.statusCode).toEqual(200);
     expect(res.body.text).toBe('new text');
@@ -42,7 +43,7 @@ describe('updateComment controller', () => {
     const res = await request(app)
       .put(`/posts/${postId}`)
       .send({ text: '' });
-      console.log(res.body);
+
     expect(res.statusCode).toEqual(400);
     // Returns array of validation errors in case of missing post text
     expect(res.body[0].msg).toBe('Post text or image is required');
