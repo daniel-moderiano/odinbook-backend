@@ -172,25 +172,6 @@ const deleteComment = asyncHandler(async (req, res) => {
   res.status(200).json({ id: req.params.commentId });  // Consider also returning the deleted comment
 });
 
-
-// @desc    Get detailed likes information on a comment
-// @route   GET /api/posts/:postId/comments/:commentId/likes
-// @access  Private
-const getCommentLikes = asyncHandler(async (req, res) => {
-  const comment = await Comment.findById(req.params.commentId, 'likes').populate({
-    path: 'likes',
-    select: 'firstName lastName profilePic'
-  });
-
-  if (!comment) {  // Comment not found in db
-    res.status(400);
-    throw new Error('Comment not found');
-  }
-
-  // Post found with no errors; return likes
-  res.status(200).json(comment.likes);
-});
-
 module.exports = {
   getComments,
   getComment,
