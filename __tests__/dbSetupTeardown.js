@@ -21,6 +21,9 @@ const mjId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000009");
 
 const normanPostId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000010");
 
+const peterCommentId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000011");
+const harryCommentId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000012");
+
 const users = [
   {
     firstName: 'Peter',
@@ -177,8 +180,8 @@ const posts = [
 
     ],
     "comments": [
-      "6254108b9302b7824770eb6f",
-      "6254108b9302b7824770eb67"
+      peterCommentId,
+      harryCommentId
     ],
     "createdAt": "2021-06-20T12:38:54.295Z",
     "updatedAt": "2022-04-19T02:31:49.436Z",
@@ -187,7 +190,7 @@ const posts = [
 
 const comments = [
   {   // Peter comments on Norman's post, liked by Harry and Norman
-    "_id": "6254108b9302b7824770eb6f",
+    "_id": peterCommentId,
     "user": "4c8a331bda76c559ef000004",
     "text": "It's a jungle out there",
     "likes": [
@@ -197,7 +200,7 @@ const comments = [
     "createdAt": "2020-12-03T10:35:02.373Z",
   },
   {   // Harry comments on Norman's post, liked by MJ and Peter
-    "_id": "6254108b9302b7824770eb67",
+    "_id": harryCommentId,
     "user": "4c8a331bda76c559ef000005",
     "text": "It's a jungle out there",
     "likes": [
