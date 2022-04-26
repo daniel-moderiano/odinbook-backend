@@ -177,7 +177,8 @@ const posts = [
     "user": "4c8a331bda76c559ef000006",
     "text": "You can't do this to me!",
     "likes": [
-
+      '4c8a331bda76c559ef000004',
+      '4c8a331bda76c559ef000005'
     ],
     "comments": [
       peterCommentId,
