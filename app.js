@@ -37,12 +37,6 @@ app.use(session({
   store: sessionStore,
   resave: false,
   saveUninitialized: false,
-  cookie: {   // cannot set security options in development as localhost runs on http only
-    secure: process.env.NODE_ENV === 'development' ? false : true, 
-    httpOnly: process.env.NODE_ENV === 'development' ? false : true,
-    // sameSite: process.env.NODE_ENV === 'development' ? false : true,
-    maxAge: 24 * 60 * 60 * 1000 * 7   // 7 days
-  }
 }));
 
 // PASSPORT SETUP
