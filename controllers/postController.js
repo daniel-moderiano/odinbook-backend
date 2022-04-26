@@ -191,7 +191,8 @@ const likePost = asyncHandler(async (req, res) => {
 // @route   DELETE /api/posts/:postId
 // @access  Private
 const deletePost = asyncHandler(async (req, res) => {
-  const post = await Post.findById(req.params.postId);
+  // Use findOneAndDelete to return the deleted post after deletion
+  const post = await Post.findOneAndDelete({ _id: req.params.postId });
 
   if (!post) {  // Post not found in db
     res.status(400);
@@ -207,8 +208,6 @@ const deletePost = asyncHandler(async (req, res) => {
     });
   }
   
-  // Post found with no errors; remove from db
-  await post.remove();
   res.status(200).json(post); // Might consider returning the deleted post itself here
 });
 

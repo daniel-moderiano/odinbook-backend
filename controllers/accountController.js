@@ -75,14 +75,13 @@ const removeAllFriends = async(userId) => {
 
 // Remove the user document and any images.
 const removeUser = async(userId) => {
-  const user = await User.findById(userId);
+  // Ensure to use findOneAndDelete to return the deleted user (use information for cloudinary destroy operation)
+  const user = await User.findOneAndDelete({ _id: userId });
 
   // Remove image from cloudinary if image exists
   if (user.profilePic) {
     cloudinary.uploader.destroy(user.profilePic.imageId);
   }
-  // User found with no errors; remove from db
-  await user.remove();
 }
 
 module.exports = {

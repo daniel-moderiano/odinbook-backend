@@ -4,14 +4,14 @@ const Post = require('../models/PostModel');
 const Comment = require('../models/CommentModel');
 const mongoose = require('mongoose');
 
-// Standard database setup and teardown
+// Standard database setup and teardown. Do not clear between each test, as state is often required to persist between tests
 beforeAll(() => db.initialiseMongoServer());
-// afterEach(() => db.clearMongoServer());   // may or may not be required when testing individual controllers
-afterAll(async () => {
+afterAll(async () => {    // shut down in between test suites
   await db.clearMongoServer();
   await db.stopMongoServer();
 });
 
+// Explicitly define IDs here to make it easier to understand relationships in test db
 const peterId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000004");
 const harryId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000005");
 const normanId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000006");
@@ -24,6 +24,7 @@ const normanPostId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000010");
 const peterCommentId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000011");
 const harryCommentId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000012");
 
+// Set up array of user/post/comment docs to be later saved to db
 const users = [
   {
     firstName: 'Peter',
@@ -172,7 +173,7 @@ const posts = [
     "createdAt": "2021-12-20T12:38:54.295Z",
     "updatedAt": "2022-04-19T02:31:49.436Z",
   },
-  {
+  {   // the main test post here with regards to likes and comments. Note that inserting the userID variables into likes array does NOT work!
     "_id": normanPostId,
     "user": "4c8a331bda76c559ef000006",
     "text": "You can't do this to me!",
@@ -221,7 +222,7 @@ const comments = [
   }
 ];
 
-// IIFE to populate databse with initial data
+// IIFE to populate databse with initial data. Use insertMany to reduce overall db calls
 (async () => {
   User.insertMany(users, (err, docs) => {
     if (err) { console.log(err); }
