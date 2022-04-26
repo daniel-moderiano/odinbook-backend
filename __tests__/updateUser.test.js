@@ -20,17 +20,17 @@ const userId = '4c8a331bda76c559ef000004';
 
 describe('updateUser controller', () => {
   it("successfully updates basic user info (i.e. last name)", async () => {
-    const res = await request(app)
-      .put(`/${userId}`)
-      .type('form')   // ! will not read as form data without this
-      .send({
-        firstName: 'Peter',
-        lastName: 'Porker', 
-        email: 'peter@gmail.com', 
-      });
-    expect(res.headers['content-type']).toMatch(/json/);
-    expect(res.statusCode).toEqual(200);
-    expect(res.body.lastName).toBe('Porker');
+    it("correctly populates nested like fields", async () => {
+      const res = await request(app)
+        .put(`/posts/${postId}/comments/${commentId}`)
+        // .type('form')
+        .send({
+          text: 'updated'
+        });
+      expect(res.headers['content-type']).toMatch(/json/);
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.text).toBe('updated');
+    });
   });
 
   it("does not attempt to update bio information if none is provided", async () => {

@@ -26,4 +26,3 @@ describe('getComment controller', () => {
     expect(res.body.likes[0].fullName).toBe('Harry Osborn');
   });
 });
-
