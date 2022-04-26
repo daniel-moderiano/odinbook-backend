@@ -50,7 +50,7 @@ const removeAllPosts = async(userId) => {
   }
 
   // Finally, remove all posts by this user
-  const removed = await Post.deleteMany({ 'user': userId });
+  await Post.deleteMany({ 'user': userId });
 }
 
 // Removes all comment documents made by the user, and any references to these comments amongst all posts
