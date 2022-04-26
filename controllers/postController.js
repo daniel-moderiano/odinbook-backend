@@ -15,7 +15,7 @@ const generateAltText = require('../utils/altTextGenerator');
 const getAllPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find({})
     .populate('user', 'firstName lastName profilePic')
-    .populate({
+    .populate({   // this is useful as likes are not their own schema/collection
       path: 'likes',
       select: 'firstName lastName profilePic'
     })
@@ -29,7 +29,7 @@ const getPost = asyncHandler(async (req, res) => {
   // Retrieve post and populate only those user details required for display on posts (virtual 'fullName' can be called when first and last name are populated)
   const post = await Post.findById(req.params.postId)
     .populate('user', 'firstName lastName profilePic')
-    .populate({
+    .populate({   // this is useful as likes are not their own schema/collection
       path: 'likes',
       select: 'firstName lastName profilePic'
     })
@@ -154,7 +154,7 @@ const updatePost = [
       };
 
       post.text = req.body.text;
-      await post.save()
+      await post.save();
       
       res.status(200).json(post);   // Return status OK and updated post to client
     }
@@ -197,17 +197,19 @@ const deletePost = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('Post not found');
   }
+
   // Remove image from cloudinary if image exists
-  if (post.image) {
+  if (Object.keys(post.image) > 0) {
     cloudinary.uploader.destroy(post.image.imageId, (err, result) => {
       if (err) {    // error occurred with delete operation. Log error but continue with post deletion
         console.log(err);
       }
     });
   }
+  
   // Post found with no errors; remove from db
   await post.remove();
-  res.status(200).json({ id: req.params.postId }); // Might consider returning the deleted post itself here
+  res.status(200).json(post); // Might consider returning the deleted post itself here
 });
 
 module.exports = {
