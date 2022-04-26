@@ -69,11 +69,6 @@ app.get('/auth/facebook/callback',
     res.redirect(process.env.HOST_URL);
 });
 
-// ! test route only, remove in end product
-app.get('/test', (req,res) => {
-  res.send({ msg: 'done'})
-})
-
 // Use routes
 app.use('/api/posts', postRoutes);
 app.use('/api/users', userRoutes);
