@@ -17,6 +17,7 @@ const harryId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000005");
 const normanId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000006");
 const gwenId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000007");
 const eddieId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000008");
+const mjId = new mongoose.Types.ObjectId("4c8a331bda76c559ef000009");
 
 const users = [
   {
@@ -39,6 +40,10 @@ const users = [
       },
       {
         "user": "4c8a331bda76c559ef000008",
+        "status": "deletedRequest",
+      },
+      {
+        "user": "4c8a331bda76c559ef000009",
         "status": "deletedRequest",
       },
     ],
@@ -99,6 +104,19 @@ const users = [
     friends: [],
     _id: eddieId,
   },
+  {
+    firstName: 'Mary Jane',
+    lastName: 'Watson',
+    email: 'mj@gmail.com',
+    password: 'test123', 
+    friends: [
+      {
+        "user": "4c8a331bda76c559ef000004",
+        "status": "friend",
+      },
+    ],
+    _id: mjId,
+  },
 ];
 
 const posts = [
@@ -134,6 +152,22 @@ const posts = [
   {
     "user": "4c8a331bda76c559ef000005",
     "text": "I'm ruined. All I have left is Spider-Man.",
+    "likes": [],
+    "comments": [],
+    "createdAt": "2021-04-20T12:38:54.295Z",
+    "updatedAt": "2022-04-19T02:31:49.436Z",
+  },
+  {
+    "user": "4c8a331bda76c559ef000009",
+    "text": "Hello it's me, MJ!",
+    "likes": [],
+    "comments": [],
+    "createdAt": "2021-04-20T12:38:54.295Z",
+    "updatedAt": "2022-04-19T02:31:49.436Z",
+  },
+  {
+    "user": "4c8a331bda76c559ef000006",
+    "text": "You can't do this to me!",
     "likes": [],
     "comments": [],
     "createdAt": "2021-04-20T12:38:54.295Z",

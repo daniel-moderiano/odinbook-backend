@@ -18,7 +18,7 @@ describe('getUsers controller', () => {
     const res = await request(app).get('/');
     expect(res.headers['content-type']).toMatch(/json/);
     expect(res.statusCode).toEqual(200);
-    expect(res.body.users.length).toBe(2);
+    expect(res.body.users.length).toBe(6);
   });
 
   it("does not expose password in user data returned from db", async () => {

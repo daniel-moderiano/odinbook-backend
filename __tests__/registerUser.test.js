@@ -12,23 +12,23 @@ describe('registerUser controller', () => {
     const res = await request(app)
       .post('/api/users/register')
       .send({
-        firstName: 'Norman',
-        lastName: 'Osborn', 
-        email: 'norman@gmail.com', 
+        firstName: 'Ted',
+        lastName: 'Hoffman', 
+        email: 'ted@gmail.com', 
         password: 'test123',
         confirmPassword: 'test123'
       });
     expect(res.headers['content-type']).toMatch(/json/);
     expect(res.statusCode).toEqual(200);
-    expect(res.body.user.firstName).toBe('Norman');
+    expect(res.body.user.firstName).toBe('Ted');
 
     // Check password is not exposed
     expect(res.body.user.password).toBe(undefined);
   });
 
   it("creates new user in db upon registering successfully", async () => {
-    const user = await User.findOne({ firstName: 'Norman' });
-    expect(user.firstName).toBe('Norman');
+    const user = await User.findOne({ firstName: 'Ted' });
+    expect(user.firstName).toBe('Ted');
   });
 });
 

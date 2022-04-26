@@ -29,7 +29,6 @@ describe('getUser controller', () => {
     const res = await request(app).get(`/${userId}`);
     expect(res.headers['content-type']).toMatch(/json/);
     expect(res.statusCode).toEqual(200);
-    console.log(res.body);
     // Confirm all 3 posts are in date order
     expect(res.body[0].datePosted).toBe('March 20, 2021');
     expect(res.body[1].datePosted).toBe('December 2, 2020');
