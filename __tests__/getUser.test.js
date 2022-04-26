@@ -14,7 +14,7 @@ app.get('/:userId', getUser);
 require('./dbSetupTeardown');
 
 // UserID for 'Peter Parker' - sourced from the dbSetupTeardown.js file
-const userId = '4c8a331bda76c559ef000004'
+const userId = '4c8a331bda76c559ef000004';
 
 describe('getUser controller', () => {
   it("retrieves specified user by ID", async () => {
@@ -37,5 +37,11 @@ describe('getUser controller', () => {
     expect(res.statusCode).toEqual(200);
     expect(res.body.user.fullName).toBe('Peter Parker');
   });
-})
+
+  it("throws 'user not found' error if ID does not exist in DB", async () => {
+    const res = await request(app).get('/4c8a331bda76c559ef000000');
+    expect(res.statusCode).toEqual(400);
+    expect((/user not found/i).test(res.text)).toBe(true);
+  });
+});
 
