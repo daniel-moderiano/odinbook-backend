@@ -220,26 +220,6 @@ const deletePost = asyncHandler(async (req, res) => {
   res.status(200).json({ id: req.params.postId }); // Might consider returning the deleted post itself here
 });
 
-
-// @desc    Get detailed likes information on a post
-// @route   GET /api/posts/:postId/likes
-// @access  Private
-const getPostLikes = asyncHandler(async (req, res) => {
-  const post = await Post.findById(req.params.postId, 'likes').populate({
-    path: 'likes',
-    select: 'firstName lastName profilePic'
-  });
-
-  if (!post) {  // Post not found in db
-    res.status(400);
-    throw new Error('Post not found');
-  }
-
-  // Post found with no errors; return likes
-  res.status(200).json(post.likes);
-});
-
-
 module.exports = {
   getAllPosts,
   getPost,
@@ -247,5 +227,4 @@ module.exports = {
   updatePost,
   likePost,
   deletePost,
-  getPostLikes
 }
