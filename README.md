@@ -29,7 +29,6 @@ At it's core, the odinbook backend is a NodeJS/Express application with MongoDB 
 * [Jest](https://jestjs.io/) - JavaScript testing framework
 * [Heroku](https://www.heroku.com/) - Cloud application hosting platform
 
-
 ## Acknowledgments
 
 The following resources were a great help throughout the development of the odinbook backend.
