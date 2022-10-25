@@ -10,7 +10,7 @@ const customFields = {
   usernameField: 'email',
 }
 
-const verifyCallback = async (username, password, done) => {
+const verifyCallback = asyncHandler(async (username, password, done) => {
   // Check for existing user in db, and if found, return only name and email
   // Add collation with strength 2 to perform case-insensitive search
   const user = await User.findOne({ email: username }).collation({ locale: 'en', strength: 2 });
@@ -29,7 +29,7 @@ const verifyCallback = async (username, password, done) => {
       return done(null, false, { message: 'Invalid credentials' })
     }
   });
-};
+});
 
 const strategy = new LocalStrategy(customFields, verifyCallback);
 
@@ -42,9 +42,9 @@ passport.serializeUser((user, done) => {
 // Only return basic user doc info
 passport.deserializeUser((id, done) => {
   User.findById(id, {
-    'firstName': 1, 
-    'lastName': 1, 
-    'email': 1,  
+    'firstName': 1,
+    'lastName': 1,
+    'email': 1,
   }, (err, user) => {
     done(err, user);
   });
