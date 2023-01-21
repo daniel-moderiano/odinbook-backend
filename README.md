@@ -8,7 +8,9 @@ Visit the [parent repository »](https://github.com/daniel-moderiano/odinbook)
 
 ## About the project
 
-The odinbook backend is an express/nodeJS server that integrates with MongoDB to provide all the basic underlying features you would find in a social media application. This server is hosted on [Heroku](https://www.heroku.com/) and also serves the odinbook frontend from this location.
+The odinbook backend is an express/nodeJS server that integrates with MongoDB to provide all the basic underlying features you would find in a social media application. This server is running with NGINX from a single EC2 instance on AWS, and uses Route 53 for DNS management. It uses a simple single-subnet VPC shown below. The server also serves the odinbook frontend from this location.
+
+![case-1_updated](https://user-images.githubusercontent.com/59184832/213827737-27f55c6c-f660-4b6a-8eb3-38bd348f28c0.png)
 
 ### Features
 
