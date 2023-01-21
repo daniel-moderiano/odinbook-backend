@@ -1,5 +1,5 @@
 # Odinbook backend
-This is the backend repository for [odinbook](https://odinbook-dm.herokuapp.com/) - a social media website created as part of [The Odin Project](https://www.theodinproject.com/) NodeJS course. This repository contains all the server-side code for odinbook, with information on the features and technologies used. For a general overview of odinbook, or detailed information on the frontend, please visit the following links:
+This is the backend repository for [odinbook](https://odinbook.com/) - a social media website created as part of [The Odin Project](https://www.theodinproject.com/) NodeJS course. This repository contains all the server-side code for odinbook, with information on the features and technologies used. For a general overview of odinbook, or detailed information on the frontend, please visit the following links:
 
 Visit the [frontend repository »](https://github.com/daniel-moderiano/odinbook-frontend)
 
