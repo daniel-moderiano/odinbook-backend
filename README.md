@@ -29,7 +29,7 @@ At it's core, the odinbook backend is a NodeJS/Express application with MongoDB 
 * [Cloudinary](https://cloudinary.com/) - Image upload and storage
 * [Azure Computer Vision](https://azure.microsoft.com/en-us/services/cognitive-services/computer-vision/#overview) - AI image analysis
 * [Jest](https://jestjs.io/) - JavaScript testing framework
-* [Heroku](https://www.heroku.com/) - Cloud application hosting platform
+* [AWS](https://aws.amazon.com/) - Cloud Computing Services
 
 ## Acknowledgments
 
@@ -38,3 +38,4 @@ The following resources were a great help throughout the development of the odin
 * [Randall Deggess](https://www.rdegges.com/) and his NodeJS/JWT authentication talks
 * [Traversy Media](https://www.youtube.com/channel/UC29ju8bIPH5as8OGnQzwJyA) for general MERN stack advice
 * [Zach Gollwitzer](https://www.youtube.com/c/ZachGollwitzer) for the best Passport and Express session reference
+* [Adrian Cantrill](https://learn.cantrill.io/) for in-depth, understanding-focused AWS courses
